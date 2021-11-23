@@ -1,0 +1,75 @@
+package Model;
+
+public class Complex {
+
+    private double p_reel;
+    private double p_img;
+
+    public static class Builder {
+
+        private double p_reel;
+        private double p_img;
+
+        public Builder (double r, double i){
+            p_img = i;
+            p_reel = r;
+        }
+
+        public Complex build(){
+            return new Complex(this);
+        }
+    }
+
+    private Complex( Builder builder){
+        p_img = builder.p_img;
+        p_reel = builder.p_reel;
+    }
+
+    @Override
+    public String toString() {
+        return "C : " + p_reel + " + i"+ p_img;
+    }
+
+    /*********************************************************
+     *********************************************************
+     *****************GETTERS AND SETTERS*********************
+     *********************************************************
+     ********************************************************/
+
+    public double getP_img() {
+        return p_img;
+    }
+
+    public double getP_reel() {
+        return p_reel;
+    }
+
+    public void setP_img(double p_img) {
+        this.p_img = p_img;
+    }
+
+    public void setP_reel(double p_reel) {
+        this.p_reel = p_reel;
+    }
+
+    /*********************************************************
+     *********************************************************
+     **********************OPERATIONS*************************
+     *********************************************************
+     ********************************************************/
+
+    //Addition
+    public Complex add(Complex b){
+        return new Complex( new Builder( (this.p_reel + b.p_reel), (this.p_img + b.p_img) ));
+    }
+
+    //Substraction
+    public Complex sub(Complex b){
+        return new Complex( new Builder ( (this.p_reel - b.p_reel), (this.p_img - b.p_img) ));
+    }
+
+    public double module(){
+        return Math.sqrt( (this.p_reel * this.p_reel) + (this.p_img * this.p_img));
+    }
+
+}
