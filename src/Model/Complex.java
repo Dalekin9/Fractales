@@ -63,6 +63,14 @@ public class Complex {
         return new Complex( new Builder( (this.p_reel + b.p_reel), (this.p_img + b.p_img) ));
     }
 
+    //Multiplication
+    public Complex mul(Complex b){
+        double pr = (this.p_reel * b.p_reel) - (this.p_img * b.p_img);
+        double pi = ((this.p_reel + this.p_img)*(b.p_reel + b.p_img)) -
+                (this.p_reel*b.p_reel) - (this.p_img * b.p_img);
+        return new Complex( new Builder( pr, pi ));
+    }
+
     //Substraction
     public Complex sub(Complex b){
         return new Complex( new Builder ( (this.p_reel - b.p_reel), (this.p_img - b.p_img) ));

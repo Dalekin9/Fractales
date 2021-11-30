@@ -2,7 +2,7 @@ package Model;
 
 public class Function {
 
-    private double z;
+    private Complex z;
     private Complex c;
 
     public Function(Complex c){
