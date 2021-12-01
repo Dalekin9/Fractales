@@ -115,7 +115,7 @@ public class Main {
             System.out.println("Please, follow the instructions below:");
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp( "FractaleCLI", options, true );
-            System.exit(1);
+            System.exit(0);
         }
 
     }

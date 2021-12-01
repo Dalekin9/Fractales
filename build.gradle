@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main{
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+dependencies {
+    implementation 'junit:junit:4.13.2'
+    implementation files('lib/commons-cli-1.5.0.jar')
+}
+
+application {
+    mainClass = 'Controler.Main'
+}

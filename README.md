@@ -6,12 +6,15 @@ CPOO5
 
 **Pauline ADAM et Ugo TORIS**
 
-##Comment compiler le projet
+###Comment compiler le projet
 
-##Comment lancer les deux versions du programme
+./gradlew build
+./gradlew run --args="-c 4 -p 9 -r 84"
 
-##Les principaux choix techniques (considérer comme des points fort)
+###Comment lancer les deux versions du programme
 
-##Rapport sur performance des versions parallèles
+###Les principaux choix techniques (considérer comme des points fort)
 
-##References aux sources
+###Rapport sur performance des versions parallèles
+
+###References aux sources
