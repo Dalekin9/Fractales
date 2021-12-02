@@ -24,41 +24,6 @@ public class Main {
          */
 
         //suppose que on a tjr gauche < droite
-        double[][] rect = { {-1,1}, {-1,1}};
-        double pas = 0.01;
-        double w = (rect[0][1] - rect[0][0])/pas;
-        double h = (rect[1][1] - rect[1][0])/pas;
-        int[][] tab_ind = new int[(int)w][(int)h];
-        int compi=0;
-
-        for (double r = rect[0][0]; r < rect[0][1];r+=pas){
-            int compj=0;
-            for (double i = rect[1][0]; i < rect[1][1];i+=pas){
-                //System.out.println("i : "+i);
-                //System.out.println("nouveau i : "+i);
-                Complex c = new Complex.Builder(r,i).build();
-                int ind = Program.divergenceIndex(c);
-                tab_ind[compi][compj] = ind;
-                compj++;
-            }
-            compi++;
-        }
-
-        var img=new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
-        for (int i = 0;i<tab_ind.length;i++){
-            for (int j = 0; j< tab_ind[0].length;j++){
-                int r= (255*tab_ind[i][j])/1000;
-                int g= (400*tab_ind[i][j])/1000;
-                int b= (300*tab_ind[i][j])/1000;
-                //System.out.println("indice : "+tab_ind[i][j]);
-                //System.out.println(" r : "+r+", g : "+g+", b : "+b);
-                int col =  (r << 16) | (g << 8) | b;
-                img.setRGB(i,j,col);
-            }
-        }
-        File f = new File("FileTest.png");
-        ImageIO.write(img, "PNG", f);
-
 
         Options options = new Options();
         //rectangle
@@ -92,9 +57,8 @@ public class Main {
 
         //parser la ligne de commande
         CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = null;
         try {
-            cmd = parser.parse(options, args);
+            CommandLine cmd = parser.parse(options, args);
 
             String rect_s = cmd.getOptionValue("r");
             System.out.println("Rect : " + rect_s);
@@ -104,6 +68,80 @@ public class Main {
 
             String p = cmd.getOptionValue("p");
             System.out.println("Pas : " + p);
+
+            // pour le rectangle
+            int compt = 0;
+            String rec = "";
+            while(compt != rect_s.length()){
+                if (rect_s.charAt(compt) == ','){
+                    rec+="/";
+                } else if (rect_s.charAt(compt) != ' ' && rect_s.charAt(compt) != '{' && rect_s.charAt(compt) != '}') {
+                    rec+=rect_s.charAt(compt);
+                }
+                compt++;
+            }
+            System.out.println(rec);
+            String[] res = rec.split("/");
+            System.out.println("1 : "+res[0]+", 2 : "+res[1]+", 3 : "+res[2]+", 4 : "+res[3]);
+
+            // pour la constante
+            compt = 0;
+            String co = "";
+            while(compt != constante.length()){
+                if (constante.charAt(compt) == '+'){
+                    co+="/";
+                } else if (constante.charAt(compt) != ' ' && constante.charAt(compt) != 'i') {
+                    co+=constante.charAt(compt);
+                }
+                compt++;
+            }
+            System.out.println(co);
+            String[] con = co.split("/");
+            System.out.println("1 : "+con[0]+", 2 : "+con[1]);
+
+            double[][] rect = {
+                    {Double.parseDouble(res[0]),Double.parseDouble(res[1])},
+                    {Double.parseDouble(res[2]),Double.parseDouble(res[3])}
+            };
+            double pas = Double.parseDouble(p);
+            double w = (rect[0][1] - rect[0][0])/pas;
+            double h = (rect[1][1] - rect[1][0])/pas;
+            int[][] tab_ind = new int[(int)w][(int)h];
+            int compi=0;
+
+            for (double r = rect[0][0]; r < rect[0][1];r+=pas){
+                int compj=0;
+                for (double i = rect[1][0]; i < rect[1][1];i+=pas){
+                    //System.out.println("i : "+i);
+                    //System.out.println("nouveau i : "+i);
+                    Complex c = new Complex.Builder(r,i).build();
+                    int ind = Program.divergenceIndex(c);
+                    tab_ind[compi][compj] = ind;
+                    compj++;
+                }
+                compi++;
+            }
+
+            var img=new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
+            for (int i = 0;i<tab_ind.length;i++){
+                for (int j = 0; j< tab_ind[0].length;j++){
+                    int r= (255*tab_ind[i][j])/1000;
+                    int g= (400*tab_ind[i][j])/1000;
+                    int b= (300*tab_ind[i][j])/1000;
+                    //System.out.println("indice : "+tab_ind[i][j]);
+                    //System.out.println(" r : "+r+", g : "+g+", b : "+b);
+                    int col =  (r << 16) | (g << 8) | b;
+                    img.setRGB(i,j,col);
+                }
+            }
+            File f = new File("FileTest.png");
+            ImageIO.write(img, "PNG", f);
+
+
+
+
+
+
 
             if (cmd.hasOption("h")){
                 final HelpFormatter formatter = new HelpFormatter();
