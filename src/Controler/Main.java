@@ -1,6 +1,7 @@
 package Controler;
 
 import Model.Complex;
+import Model.Function;
 import org.apache.commons.cli.*;
 
 import javax.imageio.ImageIO;
@@ -109,13 +110,15 @@ public class Main {
             int[][] tab_ind = new int[(int)w][(int)h];
             int compi=0;
 
+            Program program = new Program(new Function(new Complex.Builder( Double.parseDouble(con[0]),Double.parseDouble(con[1]) ).build()));
+
             for (double r = rect[0][0]; r < rect[0][1];r+=pas){
                 int compj=0;
                 for (double i = rect[1][0]; i < rect[1][1];i+=pas){
                     //System.out.println("i : "+i);
                     //System.out.println("nouveau i : "+i);
                     Complex c = new Complex.Builder(r,i).build();
-                    int ind = Program.divergenceIndex(c);
+                    int ind = program.divergenceIndex(c);
                     tab_ind[compi][compj] = ind;
                     compj++;
                 }
