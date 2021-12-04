@@ -7,8 +7,8 @@ public class Complex {
 
     public static class Builder {
 
-        private double p_reel;
-        private double p_img;
+        private final double p_reel;
+        private final double p_img;
 
         public Builder (double r, double i){
             p_img = i;
@@ -27,7 +27,7 @@ public class Complex {
 
     @Override
     public String toString() {
-        return "C : " + p_reel + " + i"+ p_img;
+        return p_reel + " + i"+ p_img;
     }
 
     /*********************************************************

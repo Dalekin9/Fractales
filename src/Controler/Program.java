@@ -5,8 +5,8 @@ import Model.Function;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class Program {
 
@@ -59,13 +59,23 @@ public class Program {
             }
         }
 
-        File f;
         if (fic.equals("")){
-            f = new File("Fractale.png");
-        } else {
-            f = new File(fic);
+            fic = "Fractale";
         }
-        ImageIO.write(img, "PNG", f);
+        File file = new File(fic+".png");
+
+        ImageIO.write(img, "PNG", file);
+        writeFileTxt(rect,pas,f,fic);
+    }
+
+    public void writeFileTxt(double[][] rect, double pas, Function f,String name) throws IOException {
+        File file = new File(name+".txt");
+        PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8);
+        writer.println("Descriptif de la Fractale :\n");
+        writer.println("Rect : [ ["+rect[0][0]+", "+rect[0][1]+"], ["+rect[1][0]+", "+rect[1][1]+"] ]");
+        writer.println("Pas : "+pas);
+        writer.println("Fonction : x^2 + ("+f.getC()+")");
+        writer.close();
     }
 
 }

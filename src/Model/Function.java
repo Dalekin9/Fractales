@@ -1,5 +1,4 @@
 package Model;
-import Model.Complex;
 
 public class Function {
 
@@ -12,5 +11,13 @@ public class Function {
 
     public Complex img(Complex z){
         return z.add(c);
+    }
+
+    public Complex getC() {
+        return c;
+    }
+
+    public void setC(Complex c) {
+        this.c = c;
     }
 }
