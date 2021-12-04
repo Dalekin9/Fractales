@@ -98,6 +98,16 @@ public class Launcher {
                     double[] r = correctFormatRect(cmd.getOptionValue("r"));
                     double p = correctFormatPas(cmd.getOptionValue("p"));
 
+                    if (r[0] >= r[1] || r[2] >= r[3]){
+                        errorParsing();
+                    } else if (r[0] + p >= r[1] || r[2] + p >= r[3]){
+                        errorParsing();
+                    } else if (p == 0.0) {
+                        errorParsing();
+                    } else if (p < 0){
+                        errorParsing();
+                    }
+
                     Program program = new Program(new Function(new Complex.Builder(cst[0],cst[1]).build()));
                     if (cmd.hasOption("f")) {
                         program.createFractale(r, p, cmd.getOptionValue("f"));
