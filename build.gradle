@@ -25,5 +25,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'Controler.Main'
+    mainClass = 'Controler.Launcher'
 }
