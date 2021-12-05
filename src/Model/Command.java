@@ -1,4 +1,4 @@
-package Controler;
+package Model;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -91,19 +91,44 @@ public class Command {
                 .argName("pas")
                 .required(false)
                 .build());
-        //help
-        options.addOption(Option.builder("h")
-                .longOpt("help")
-                .build());
-
         //fichier
-        options.addOption(Option.builder("f")
+        options.addOption(Option.builder("fi")
                 .longOpt("fic")
                 .hasArg(true)
                 .desc("Nom du fichier de l'image ")
                 .argName("fichier")
                 .required(false)
                 .build());
+        //fonction
+        options.addOption(Option.builder("fo")
+                .longOpt("fonct")
+                .hasArg(true)
+                .desc("Fonction pour la fractale")
+                .argName("fonction")
+                .required(false)
+                .build());
+        //coloration
+        options.addOption(Option.builder("col")
+                .longOpt("color")
+                .hasArg(true)
+                .desc("Choix de la coloration")
+                .argName("coloration")
+                .required(false)
+                .build());
+        //nombre d'iteration
+        options.addOption(Option.builder("it")
+                .longOpt("iter")
+                .hasArg(true)
+                .desc("Nombre d'iterations de la fonction")
+                .argName("iterations")
+                .required(false)
+                .build());
+        //help
+        options.addOption(Option.builder("h")
+                .longOpt("help")
+                .build());
+
+
 
         return options;
     }

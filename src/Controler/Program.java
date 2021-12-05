@@ -23,7 +23,7 @@ public class Program {
         Complex zn = z0;
         // sortie de boucle si divergence
         while (ite < MAX_ITER - 1 && zn.module() <=RADIUS){
-            zn = f.img(zn.mul(zn));
+            zn = f.img(zn);
             ite++;
         }
         return ite;
@@ -88,9 +88,9 @@ public class Program {
         var img=new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
         for (int i = 0;i<tab_ind.length;i++){
             for (int j = 0; j< tab_ind[0].length;j++){
-                int r= (255*tab_ind[i][j])/1000;
-                int g= (400*tab_ind[i][j])/1000;
-                int b= (300*tab_ind[i][j])/1000;
+                int r= (255*tab_ind[i][j])/MAX_ITER;
+                int g= (255*tab_ind[i][j])/MAX_ITER;
+                int b= (255*tab_ind[i][j])/MAX_ITER;
                 int col =  (r << 16) | (g << 8) | b;
                 img.setRGB(i,j,col);
             }

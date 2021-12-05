@@ -80,4 +80,17 @@ public class Complex {
         return Math.sqrt( (this.p_reel * this.p_reel) + (this.p_img * this.p_img));
     }
 
+    public Complex puissance(Complex a, double puissance){
+        if (puissance == 1 ){
+            return a;
+        } else {
+            Complex res = a; //x * x
+            for (double i = 1; i < puissance; i += 1) {
+                res=res.mul(a);
+                //System.out.println(res);
+            }
+            return res;
+        }
+    }
+
 }
