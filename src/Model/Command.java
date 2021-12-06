@@ -7,49 +7,6 @@ public class Command {
 
     public Command(){}
 
-    public static Options createOptionConsole(){
-        Options options = new Options();
-        //rectangle
-        options.addOption(Option.builder("r")
-                .longOpt("rect")
-                .hasArg(true)
-                .desc("Borne du rectangle")
-                .argName("rectangle")
-                .required(true)
-                .build());
-        //constante
-        options.addOption(Option.builder("c")
-                .longOpt("const")
-                .hasArg(true)
-                .desc("Constante de la fonction")
-                .argName("constante")
-                .required(true)
-                .build());
-        //pas
-        options.addOption(Option.builder("p")
-                .longOpt("pas")
-                .hasArg(true)
-                .desc("Pas de discrétisation")
-                .argName("pas")
-                .required(true)
-                .build());
-        //help
-        options.addOption(Option.builder("h")
-                .longOpt("help")
-                .build());
-
-        //fichier
-        options.addOption(Option.builder("f")
-                .longOpt("fic")
-                .hasArg(true)
-                .desc("Nom du fichier de l'image ")
-                .argName("fichier")
-                .required(false)
-                .build());
-
-        return options;
-    }
-
     public static Options createOptionDemarrage(){
         Options options = new Options();
 
@@ -127,8 +84,6 @@ public class Command {
         options.addOption(Option.builder("h")
                 .longOpt("help")
                 .build());
-
-
 
         return options;
     }

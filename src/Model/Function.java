@@ -2,6 +2,7 @@ package Model;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class Function {
     private int color;
     //type de fractale
     private int type;
+    //nom pour le fichier
     private String fic;
 
     public static class Builder {
@@ -133,6 +135,23 @@ public class Function {
         return ite;
     }
 
+    public int coloration(int val){
+        int r = 0, g = 0 ,b = 0;
+        // 0 (noir/blanc) 1 (rouge) 2 (bleu) 3 (vert) 4 (multicolor)
+        switch (this.getColor()) {
+            case 0 -> {
+                r = (255 * val) / this.getIter();
+                g = (255 * val) / this.getIter();
+                b = (255 * val) / this.getIter();
+            }
+            case 1 -> r = (255 * val) / this.getIter();
+            case 2 -> b = (255 * val) / this.getIter();
+            case 3 -> g = (255 * val) / this.getIter();
+        }
+        Color color = new Color(r,g,b);
+        return color.getRGB();
+    }
+
     public double chercheMult(double pas){
         String val = String.valueOf(pas);
         System.out.println(val.length());
@@ -191,11 +210,7 @@ public class Function {
         var img=new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
         for (int i = 0;i<tab_ind.length;i++){
             for (int j = 0; j< tab_ind[0].length;j++){
-                int r= (255*tab_ind[i][j])/this.getIter();
-                int g= (255*tab_ind[i][j])/this.getIter();
-                int b= (255*tab_ind[i][j])/this.getIter();
-                int col =  (r << 16) | (g << 8) | b;
-                img.setRGB(i,j,col);
+                img.setRGB(i,j,this.coloration(tab_ind[i][j]));
             }
         }
 

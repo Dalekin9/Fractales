@@ -137,6 +137,16 @@ public class Launcher {
         return null;
     }
 
+    //coloration
+    public static String correctFormatColor(String c){
+        if (c.equals("0") || c.equals("1") || c.equals("2") || c.equals("3") || c.equals("4") ){
+            return c;
+        } else {
+            errorParsing();
+        }
+        return null;
+    }
+
     /*
      * ****************************** *
      * Partie du lancement du Programme
@@ -196,6 +206,11 @@ public class Launcher {
                         LinkedList<double[]> fo = correctFormatFct(cmd.getOptionValue("fo"));
                         System.out.println(fo.get(0)[0]+""+fo.get(0)[1]);
                         function = function.coeff(fo);
+                    }
+
+                    if (cmd.hasOption("col")){
+                        int color = Integer.parseInt(correctFormatColor(cmd.getOptionValue("col")));
+                        function = function.coloration(color);
                     }
 
 
