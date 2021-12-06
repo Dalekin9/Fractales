@@ -185,19 +185,22 @@ public class Launcher {
                         errorParsing();
                     }
 
-                    String fic = "";
+                    Function.Builder function = new Function.Builder(new Complex.Builder(cst[0],cst[1] ).build());
+
                     if (cmd.hasOption("fi")){
-                        fic = cmd.getOptionValue("fi");
+                        String fic = cmd.getOptionValue("fi");
+                        function = function.fichier(fic);
                     }
 
-                    LinkedList<double[]> fo = new LinkedList<>();
                     if (cmd.hasOption("fo")){
-                        fo = correctFormatFct(cmd.getOptionValue("fo"));
+                        LinkedList<double[]> fo = correctFormatFct(cmd.getOptionValue("fo"));
                         System.out.println(fo.get(0)[0]+""+fo.get(0)[1]);
+                        function = function.coeff(fo);
                     }
 
-                    Program program = new Program(new Function(new Complex.Builder(cst[0],cst[1]).build(), fo));
-                    program.createFractale(r, p, fic);
+
+                    Function f = function.build();
+                    f.createFractale(r,p);
 
                 } else {
                     errorParsing();
