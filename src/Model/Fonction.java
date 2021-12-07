@@ -38,6 +38,9 @@ public class Fonction implements java.util.function.Function {
         c = builder.c;
     }
 
+    public LinkedList<double[]> getCoeff() {
+        return coeff;
+    }
 
     /*
     --------Fonctions---------
@@ -45,7 +48,7 @@ public class Fonction implements java.util.function.Function {
 
     @Override
     public Complex apply(Object o) {
-        /*
+
         Complex zn = (Complex) o;
         Complex res = this.c;
         for (int i = 0; i < coeff.size(); i++){
@@ -55,11 +58,6 @@ public class Fonction implements java.util.function.Function {
             res = res.add(c);
         }
         return res;
-         */
-        Complex zn = (Complex) o;
-        Complex r = new Complex.Builder(zn.module(), 0).build();
-        return (r.div(zn.div(this.c)));
-
     }
 
     @Override

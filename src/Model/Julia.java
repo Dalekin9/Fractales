@@ -26,7 +26,7 @@ public class Julia extends Fractal{
                 case 0 -> {
                     r = (255 * val) / this.iter;
                     g = (255 * val) / this.iter;
-                    b = 255;
+                    b = (255 * val) / this.iter;
                 }
                 case 1 -> r = (255 * val) / this.iter;
                 case 2 -> b = (255 * val) / this.iter;

@@ -35,7 +35,7 @@ public abstract class Fractal {
         int ite = 0;
         Complex zn = z0;
         // sortie de boucle si divergence
-        while (ite < this.iter - 1 && zn.module() <=this.iter){
+        while (ite < this.iter - 1 && zn.module() <=2){
             zn = this.function.apply(zn);
             ite++;
         }
