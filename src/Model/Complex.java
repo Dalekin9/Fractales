@@ -71,6 +71,14 @@ public class Complex {
         return new Complex( new Builder( pr, pi ));
     }
 
+    //Division
+    public Complex div(Complex b){
+        double ra = (this.p_reel*b.p_reel + this.p_img*b.p_img) / (b.p_reel*b.p_reel + b.p_img*b.p_img);
+        double ia = (this.p_img*b.p_reel - this.p_reel*b.p_img) / (b.p_reel*b.p_reel + b.p_img*b.p_img);
+        return new Complex( new Builder( ra, ia ));
+    }
+
+
     //Substraction
     public Complex sub(Complex b){
         return new Complex( new Builder ( (this.p_reel - b.p_reel), (this.p_img - b.p_img) ));

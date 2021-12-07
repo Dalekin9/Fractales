@@ -1,8 +1,6 @@
 package Controler;
 
-import Model.Command;
-import Model.Complex;
-import Model.Function;
+import Model.*;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -48,6 +46,15 @@ public class Launcher {
             errorParsing();
         }
         return 0;
+    }
+
+    public static int correctFormatIte(String it){
+        try {
+            return Integer.parseInt(it);
+        } catch (Exception e){
+            errorParsing();
+        }
+        return -1;
     }
 
     //constante de fonction
@@ -138,13 +145,13 @@ public class Launcher {
     }
 
     //coloration
-    public static String correctFormatColor(String c){
+    public static int correctFormatColor(String c){
         if (c.equals("0") || c.equals("1") || c.equals("2") || c.equals("3") || c.equals("4") ){
-            return c;
+            return Integer.valueOf(c);
         } else {
             errorParsing();
         }
-        return null;
+        return -1;
     }
 
     /*
@@ -195,27 +202,34 @@ public class Launcher {
                         errorParsing();
                     }
 
-                    Function.Builder function = new Function.Builder(new Complex.Builder(cst[0],cst[1] ).build());
+                    BuilderFractal fractale = new BuilderFractal(r, p);
 
                     if (cmd.hasOption("fi")){
                         String fic = cmd.getOptionValue("fi");
-                        function = function.fichier(fic);
+                        fractale = fractale.fichier(fic);
                     }
 
-                    if (cmd.hasOption("fo")){
+                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
+                    if (cmd.hasOption("fo")) {
                         LinkedList<double[]> fo = correctFormatFct(cmd.getOptionValue("fo"));
-                        System.out.println(fo.get(0)[0]+""+fo.get(0)[1]);
-                        function = function.coeff(fo);
+                        System.out.println(fo.get(0)[0] + "" + fo.get(0)[1]);
+                        fonction = fonction.coef(fo);
                     }
+                    fractale.fonction(fonction.build());
 
                     if (cmd.hasOption("col")){
-                        int color = Integer.parseInt(correctFormatColor(cmd.getOptionValue("col")));
-                        function = function.coloration(color);
+                        int color = correctFormatColor(cmd.getOptionValue("col"));
+                        fractale = fractale.coloration(color);
+                    }
+
+                    if (cmd.hasOption("it")){
+                        int ite = correctFormatIte(cmd.getOptionValue("it"));
+                        fractale = fractale.iter(ite);
                     }
 
 
-                    Function f = function.build();
-                    f.createFractale(r,p);
+                    Fractal fractal = fractale.build();
+                    fractal.launchFractale();
 
                 } else {
                     errorParsing();
