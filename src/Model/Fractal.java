@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
 
 public abstract class Fractal {
 
@@ -24,7 +23,7 @@ public abstract class Fractal {
      */
 
     public int coloration(int val) {
-        return 0;
+        return Color.black.getRGB();
     }
 
     /*
@@ -99,7 +98,10 @@ public abstract class Fractal {
         var img=new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
         for (int i = 0;i<tab_ind.length;i++){
             for (int j = 0; j< tab_ind[0].length;j++){
-                img.setRGB(i,j,this.coloration(tab_ind[i][j]));
+                int c = this.coloration(tab_ind[i][j]);
+                //int r = c.getRed(); int g = c.getGreen(); int b = c.getBlue();
+                //int col = (r << 16) | (g << 8) | b;
+                img.setRGB(i,j,c);
             }
         }
 

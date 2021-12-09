@@ -18,10 +18,10 @@ public class BuilderFractal {
     public BuilderFractal(double[] r, double p){
         this.pas = p;
         this.rect = new double[][]{{r[0], r[1]}, {r[2], r[3]}};
-        this.iter = 100;
+        this.iter = 500;
         this.color = 0;
         this.fic = "Fractale";
-        this.type = 2;
+        this.type = 1;
     }
 
     public BuilderFractal fonction(Fonction f){

@@ -229,7 +229,7 @@ public class Launcher {
 
 
                     Fractal fractal = fractale.build();
-                    //fractal.launchFractale();
+                    fractal.launchFractale();
                     Sierpinski s = new Sierpinski(20,6);
                     //s.build();
 

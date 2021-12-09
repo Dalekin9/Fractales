@@ -33,6 +33,7 @@ public class Mandelbrot extends Fractal{
     }
 
 
+    /*
     @Override
     public int coloration(int val) {
         int r = 0, g = 0 ,b = 0;
@@ -52,4 +53,6 @@ public class Mandelbrot extends Fractal{
             Color color = new Color(r, g, b);
             return Math.abs(color.getRGB() - 255);
     }
+
+     */
 }
