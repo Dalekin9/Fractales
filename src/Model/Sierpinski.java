@@ -8,16 +8,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-public class Sierpinski {
+public class Sierpinski extends Fractal{
 
     int ordre;
-    int taille;
     int[][] tab;
 
-    public Sierpinski(int t, int o){
-        this.ordre = o;
-        this.taille = t;
-        tab = new int[(int) Math.pow(3, this.ordre)][(int) Math.pow(3, this.ordre)];
+    public Sierpinski(BuilderFractal builderFractal){
+        super();
+        this.color = builderFractal.color;
+        this.fic = builderFractal.fic;
+        this.ordre = builderFractal.ordre;
+        this.tab = new int[(int) Math.pow(3, this.ordre)][(int) Math.pow(3, this.ordre)];
         init();
     }
 
@@ -29,28 +30,8 @@ public class Sierpinski {
         }
     }
 
-    public void build() throws IOException {
-        construct(0, 0, this.tab.length, 0 , this.tab.length);
 
-        var img=new BufferedImage((int)this.tab.length, (int)this.tab.length, BufferedImage.TYPE_INT_RGB);
-        for (int i = 0;i<this.tab.length;i++){
-            for (int j = 0; j< this.tab[0].length;j++){
-                if (this.tab[i][j] == 0){
-                    img.setRGB(i,j, Color.black.getRGB());
-                } else {
-                    img.setRGB(i, j, Color.YELLOW.getRGB());
-                }
-            }
-        }
-
-        File file = new File("Sierp.png");
-
-        ImageIO.write(img, "PNG", file);
-
-    }
-
-    public void construct(int compt, int i1, int i2, int j1, int j2){
-        System.out.println(compt);
+    public int[][] construct(int compt, int i1, int i2, int j1, int j2){
         if (compt < this.ordre){
             int li1 = i1 + (i2 - i1)/3;
             int li2 = i1 + 2*(i2 - i1)/3;
@@ -65,7 +46,6 @@ public class Sierpinski {
                 lj1 = j1 + 1;
                 lj2 = j1 + 2;
             }
-            System.out.println("li1 :"+li1+", li2 :"+li2+", lj1 :"+lj1+", lj2 :"+lj2);
             for (int i = li1; i < li2; i++) {
                 for (int j = lj1; j < lj2; j++) {
                     this.tab[i][j] = 1;
@@ -81,6 +61,69 @@ public class Sierpinski {
             construct(nv, li2 , i2, lj1, lj2);
             construct(nv, li2 , i2, lj2, j2);
         }
+        return this.tab;
+    }
+
+
+    @Override
+    public int[][] createRect(){
+        return construct(0, 0, this.tab.length, 0 , this.tab.length);
+    }
+
+    @Override
+    public BufferedImage createImg(int[][] tab_ind){
+        BufferedImage img = new BufferedImage(this.tab.length, this.tab.length, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0;i<this.tab.length;i++){
+            for (int j = 0; j< this.tab[0].length;j++){
+                int c = this.coloration(tab_ind[i][j]);
+                if (this.tab[i][j] == 0){
+                    img.setRGB(i,j,c);
+                } else {
+                    img.setRGB(i,j,Color.BLACK.getRGB());
+                }
+            }
+        }
+        return img;
+    }
+
+    @Override
+    public int coloration(int val) {
+        switch (this.color) {
+            case 0 -> {
+                return Color.WHITE.getRGB();
+            }
+            case 1 -> {
+                return Color.RED.getRGB();
+            }
+            case 2 -> {
+                return Color.BLUE.getRGB();
+            }
+            case 3 -> {
+                return Color.GREEN.getRGB();
+            }
+            default -> {
+                return Color.BLACK.getRGB();
+            }
+        }
+    }
+
+    @Override
+    public void writeFileTxt() throws IOException {
+        File file = new File(this.fic+".txt");
+        PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8);
+        writer.println("Descriptif de la Fractale :\n");
+        writer.println("Type : Sierpinski\n");
+        writer.println("Ordre : "+this.ordre);
+        if (this.color == 0) {
+            writer.println("Coloration : Noire et Blanche");
+        } else if (this.color == 1) {
+            writer.println("Coloration : Rouge");
+        } else if (this.color == 2) {
+            writer.println("Coloration : Bleue");
+        } else if (this.color == 3) {
+            writer.println("Coloration : Verte");
+        }
+        writer.close();
     }
 
 }

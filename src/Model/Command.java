@@ -32,14 +32,7 @@ public class Command {
                 .argName("rectangle")
                 .required(false)
                 .build());
-        //constante
-        options.addOption(Option.builder("cst")
-                .longOpt("const")
-                .hasArg(true)
-                .desc("Constante de la fonction")
-                .argName("constante")
-                .required(false)
-                .build());
+
         //pas
         options.addOption(Option.builder("p")
                 .longOpt("pas")
@@ -48,14 +41,16 @@ public class Command {
                 .argName("pas")
                 .required(false)
                 .build());
-        //fichier
-        options.addOption(Option.builder("fi")
-                .longOpt("fic")
+
+        //constante
+        options.addOption(Option.builder("cst")
+                .longOpt("const")
                 .hasArg(true)
-                .desc("Nom du fichier de l'image ")
-                .argName("fichier")
+                .desc("Constante de la fonction")
+                .argName("constante")
                 .required(false)
                 .build());
+
         //fonction
         options.addOption(Option.builder("fo")
                 .longOpt("fonct")
@@ -64,14 +59,7 @@ public class Command {
                 .argName("fonction")
                 .required(false)
                 .build());
-        //coloration
-        options.addOption(Option.builder("col")
-                .longOpt("color")
-                .hasArg(true)
-                .desc("Choix de la coloration")
-                .argName("coloration")
-                .required(false)
-                .build());
+
         //nombre d'iteration
         options.addOption(Option.builder("it")
                 .longOpt("iter")
@@ -80,6 +68,43 @@ public class Command {
                 .argName("iterations")
                 .required(false)
                 .build());
+
+        //coloration
+        options.addOption(Option.builder("col")
+                .longOpt("color")
+                .hasArg(true)
+                .desc("Choix de la coloration")
+                .argName("coloration")
+                .required(false)
+                .build());
+
+        //fichier
+        options.addOption(Option.builder("fi")
+                .longOpt("fic")
+                .hasArg(true)
+                .desc("Nom du fichier de l'image ")
+                .argName("fichier")
+                .required(false)
+                .build());
+
+        //type
+        options.addOption(Option.builder("t")
+                .longOpt("type")
+                .hasArg(true)
+                .desc("Type de Fractale")
+                .argName("type")
+                .required(false)
+                .build());
+
+        //type
+        options.addOption(Option.builder("o")
+                .longOpt("ord")
+                .hasArg(true)
+                .desc("ORdre du Tapis de Sierpinski")
+                .argName("ordre")
+                .required(false)
+                .build());
+
         //help
         options.addOption(Option.builder("h")
                 .longOpt("help")

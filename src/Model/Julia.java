@@ -1,6 +1,11 @@
 package Model;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 public class Julia extends Fractal{
 
@@ -8,11 +13,62 @@ public class Julia extends Fractal{
         super();
         this.rect = builderFractal.rect;
         this.pas = builderFractal.pas;
-        this.iter = builderFractal.iter; //nb d'iteration max de la fonction
-        this.color = builderFractal.color; // 0 (noir/blanc) 1 (rouge) 2 (bleu) 3 (vert) 4 (multicolor)
-        this.fic = builderFractal.fic; //nom pour le fichier
+        this.iter = builderFractal.iter;
+        this.color = builderFractal.color;
+        this.fic = builderFractal.fic;
         this.function = builderFractal.function;
-        this.type = builderFractal.type;
+    }
+
+    public int divergenceIndex (Complex z0){
+        int ite = 0;
+        Complex zn = z0;
+        // sortie de boucle si divergence
+        while (ite < this.iter - 1 && zn.module() <=2){
+            zn = this.function.apply(zn);
+            ite++;
+        }
+        return ite;
+    }
+
+    @Override
+    public int[][] createRect(){
+        double w = (this.rect[0][1] - this.rect[0][0])/this.pas;
+        double h = (this.rect[1][1] - this.rect[1][0])/this.pas;
+        int[][] tab_ind = new int[(int)w][(int)h];
+        int compi=0;
+        double mult = chercheMult(this.pas);
+        System.out.println(mult);
+        double rl = this.rect[0][0];
+        while (rl < this.rect[0][1]){
+            int compj = 0;
+            double i = this.rect[1][0];
+            while( i < this.rect[1][1]){
+                Complex c = new Complex.Builder(rl,i).build();
+                int ind = this.divergenceIndex(c);
+                tab_ind[compi][compj] = ind;
+                compj++;
+                i = Math.round( (i + this.pas)*mult ) / mult;
+            }
+            compi++;
+            rl = Math.round( (rl + this.pas)*mult ) / mult;
+        }
+        return tab_ind;
+    }
+
+    @Override
+    public BufferedImage createImg(int[][] tab_ind){
+        double w = (this.rect[0][1] - this.rect[0][0])/this.pas;
+        double h = (this.rect[1][1] - this.rect[1][0])/this.pas;
+        BufferedImage img = new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0;i<tab_ind.length;i++){
+            for (int j = 0; j< tab_ind[0].length;j++){
+                int c = this.coloration(tab_ind[i][j]);
+                //int r = c.getRed(); int g = c.getGreen(); int b = c.getBlue();
+                //int col = (r << 16) | (g << 8) | b;
+                img.setRGB(i,j,c);
+            }
+        }
+        return img;
     }
 
     @Override
@@ -55,4 +111,25 @@ public class Julia extends Fractal{
         }
     }
 
+    @Override
+    public void writeFileTxt() throws IOException {
+        File file = new File(this.fic+".txt");
+        PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8);
+        writer.println("Descriptif de la Fractale :\n");
+        writer.println("Type : Julia\n");
+        writer.println("Rect : [ ["+this.rect[0][0]+", "+this.rect[0][1]+"], ["+this.rect[1][0]+", "+this.rect[1][1]+"] ]");
+        writer.println("Pas : "+this.pas);
+        writer.println("Fonction : "+ this.function);
+        writer.println("Iterations : "+ this.iter);
+        if (this.color == 0) {
+            writer.println("Coloration : Noire et Blanche");
+        } else if (this.color == 1) {
+            writer.println("Coloration : Rouge");
+        } else if (this.color == 2) {
+            writer.println("Coloration : Bleue");
+        } else if (this.color == 3) {
+            writer.println("Coloration : Verte");
+        }
+        writer.close();
+    }
 }

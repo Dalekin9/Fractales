@@ -13,15 +13,27 @@ public class BuilderFractal {
     protected int iter;
     protected int color;
     protected String fic;
-    protected int type;
+    protected int ordre;
+    protected String type;
 
-    public BuilderFractal(double[] r, double p){
-        this.pas = p;
-        this.rect = new double[][]{{r[0], r[1]}, {r[2], r[3]}};
-        this.iter = 500;
+    public BuilderFractal(){
+        this.rect = new double[][]{{0, 0}, {0, 0}};
+        this.pas = 0;
+        this.iter = 100;
         this.color = 0;
         this.fic = "Fractale";
-        this.type = 1;
+        this.ordre = 0;
+        this.type = "";
+    }
+
+    public BuilderFractal rect(double[] r){
+        this.rect = new double[][]{{r[0], r[1]}, {r[2], r[3]}};
+        return this;
+    }
+
+    public BuilderFractal pas(double p){
+        this.pas = p;
+        return this;
     }
 
     public BuilderFractal fonction(Fonction f){
@@ -39,18 +51,28 @@ public class BuilderFractal {
         return this;
     }
 
+    public BuilderFractal ordre(int t){
+        this.ordre = t;
+        return this;
+    }
+
+    public BuilderFractal type(String t){
+        this.type = t;
+        return this;
+    }
+
     public BuilderFractal iter(int i){
         this.iter = i;
         return this;
     }
 
     public Fractal build(){
-        if (this.type == 1) {
+        if (this.type.equals("J")) {
             return new Julia(this);
-        } else if (this.type == 2){
+        } else if (this.type.equals("M")){
             return new Mandelbrot(this);
         } else {
-            return null;
+            return new Sierpinski(this);
         }
     }
 
