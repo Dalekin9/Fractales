@@ -71,7 +71,45 @@ public class Julia extends Fractal{
         return img;
     }
 
-    @Override
+    public Color colorationG(int val) {
+        float s = (float) ( 30 + (val * 360)/this.iter ) /360;
+        float bb = (float) ( 30 + (val * 360)/this.iter ) /360;
+        if (val == this.iter) {
+            return new Color(0, 0, 0);
+        }
+        switch (this.color) {
+            case 0 -> {
+                int r = (255 * val) / this.iter;
+                int g = (255 * val) / this.iter;
+                int b = (255 * val) / this.iter;
+                return new Color(r,g,b);
+            }
+            case 1 -> {
+                int res = -42 + (val * 84 / this.iter);
+                if (res < 0) {
+                    return new Color(Color.HSBtoRGB((float) (360-res)/360, s, bb));
+                } else {
+                    return new Color(Color.HSBtoRGB((float) (res)/360, s, bb));
+                }
+            }
+            case 2 -> {
+                int res = 216 + (val * 120 / this.iter);
+                return new Color(Color.HSBtoRGB((float) (res)/360, s, bb));
+            }
+            case 3 -> {
+                int res = 96 + (val * 120 / this.iter);
+                return new Color(Color.HSBtoRGB((float) (res)/360, s, bb));
+            }
+            case 4 -> {
+                int res = (val * 360 / this.iter);
+                return new Color(Color.HSBtoRGB((float) (res)/360, 0.8F, 0.8F));
+            }
+            default -> {
+                return Color.BLACK;
+            }
+        }
+    }
+
     public int coloration(int val) {
         float s = (float) ( 30 + (val * 360)/this.iter ) /360;
         float bb = (float) ( 30 + (val * 360)/this.iter ) /360;

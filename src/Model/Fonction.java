@@ -6,6 +6,7 @@ public class Fonction implements java.util.function.Function {
 
     // 5x² = {5,2}
     private LinkedList<double[]> coeff;
+
     //constante de la fonction
     private Complex c;
 
@@ -14,13 +15,13 @@ public class Fonction implements java.util.function.Function {
 
         // 5x² = {5,2}
         private LinkedList<double[]> coeff = new LinkedList<>();
+
         //constante de la fonction
         private Complex c;
 
         public BuilderFonction (Complex c){
             this.c = c;
             coeff.add(new double[]{1, 2});
-
         }
 
         public BuilderFonction coef (LinkedList<double[]> c){

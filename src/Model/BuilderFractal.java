@@ -19,7 +19,7 @@ public class BuilderFractal {
     public BuilderFractal(){
         this.rect = new double[][]{{0, 0}, {0, 0}};
         this.pas = 0;
-        this.iter = 100;
+        this.iter = 1000;
         this.color = 0;
         this.fic = "Fractale";
         this.ordre = 0;
