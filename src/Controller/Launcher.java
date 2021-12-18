@@ -1,4 +1,4 @@
-package Controler;
+package Controller;
 
 import Model.*;
 import org.apache.commons.cli.*;
