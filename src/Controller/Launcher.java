@@ -1,8 +1,11 @@
 package Controller;
 
+import Application.UIApp;
 import Model.*;
+
 import org.apache.commons.cli.*;
 
+import javax.swing.text.View;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -56,7 +59,12 @@ public class Launcher {
      */
     public static int correctFormatIte(String it){
         try {
-            return Integer.parseInt(it);
+            int i = Integer.parseInt(it);
+            if (i < 1){
+                errorParsing();
+            }else{
+                return i;
+            }
         } catch (Exception e){
             errorParsing();
         }
@@ -242,7 +250,8 @@ public class Launcher {
                     errorParsing();
                 } else {
                     //lancer le mode graphique
-                    System.out.println("Mode graphique");
+                    UIApp ui = new UIApp();
+                    ui.launchGraph();
                 }
             }
             //console

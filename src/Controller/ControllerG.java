@@ -5,15 +5,14 @@ import View.ViewFX;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Controller {
+public class ControllerG {
     private ViewFX view;
-    private Fractal fractale;
+    private Fractal fractale ;
+
+    public ControllerG(){}
 
     public int colorFromField(String str){
         switch (str){
-            case "Noir et Blanc" -> {
-                return 0;
-            }
             case "Rouge" -> {
                 return 1;
             }
@@ -26,7 +25,9 @@ public class Controller {
             case "Multicolore" -> {
                 return 4;
             }
-            default -> {return 0;}
+            default -> {
+                return 0;
+            }
         }
     }
 
@@ -157,7 +158,12 @@ public class Controller {
 
     public static int validIte(String it){
         try {
-            return Integer.parseInt(it);
+            int i = Integer.parseInt(it);
+            if (i < 1){
+                return -1;
+            }else{
+                return i;
+            }
         } catch (Exception e){
             return -1;
         }
@@ -189,35 +195,47 @@ public class Controller {
                 double[] rect = validRect(opt.get(4));
                 double pas = validPas(opt.get(5));
 
-                if (cst == null){
-                    err.add("cst");
-                }
-                if (rect == null){
-                    err.add("r");
-                }
                 if (pas == 0){
                     err.add("p");
+                }else{
+                    fract = fract.pas(pas);
                 }
 
-                if (rect[0] + pas >= rect[1] || rect[2] + pas >= rect[3]) {
-                    err.add("rp");
+                if (rect == null){
+                    err.add("r");
+                }else{
+                    fract = fract.rect(rect);
+                    if (rect[0] + pas >= rect[1] || rect[2] + pas >= rect[3]) {
+                        err.add("rp");
+                    }
                 }
 
-                fract = fract.rect(rect).pas(pas);
-
-                Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
-                LinkedList<double[]> fo = correctFormatFct(opt.get(6));
-                if (fo == null){
+                if (cst == null){
+                    err.add("cst");
                     err.add("fo");
+                }else{
+                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
+                    LinkedList<double[]> fo = correctFormatFct(opt.get(6));
+                    if (fo == null){
+                        err.add("fo");
+                    }else{
+                        fonction.coef(fo);
+                        fract = fract.fonction(fonction.build());
+                    }
                 }
-                fonction.coef(fo);
 
-                fract = fract.fonction(fonction.build());
 
                 int ite = validIte(opt.get(7));
                 if (ite == -1){
                     err.add("it");
+                }else{
+                    fract = fract.iter(ite);
                 }
+                if(err.isEmpty()) {
+                    fractale = fract.build();
+                    view.showFractalJM(fractale, view.getMainStage());
+                }
+
 
             }
             case "Sierpinski" -> {
@@ -228,13 +246,26 @@ public class Controller {
                 }else{
                     fract = fract.ordre(order);
                 }
+                if(err.isEmpty()) {
+                    fractale = fract.build();
+                    view.showFractalS(fractale, fractale.createRect(),view.getMainStage());
+                }
             }
         }
 
-        if(err.isEmpty()) {
-            this.fractale = fract.build();
-            view.showFractal(this.fractale, view.getMainStage());
-        }
         return err;
+    }
+
+
+    public void viewHasControl(){
+        if (view.getControl() == null){
+            System.out.println("NO");
+        }else{
+            System.out.println("YES");
+        }
+    }
+
+    public void setView(ViewFX view) {
+        this.view = view;
     }
 }
