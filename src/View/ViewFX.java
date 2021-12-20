@@ -1,15 +1,13 @@
 package View;
 
-import Controller.Controller;
-import Model.BuilderFractal;
-import Model.Complex;
-import Model.Fonction;
+import Controller.ControllerG;
 import Model.Fractal;
-import javafx.application.Application;
+import Model.Sierpinski;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -19,15 +17,15 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class ViewFX extends Application {
+public class ViewFX {
 
-    private Controller control;
+    private GridPane initPane;
+    private ControllerG control;
     private Stage mainStage;
-    private Fractal fractal;
     Pane previewImage = new Pane();
     ChoiceBox<String> colorChoice;
     TextField fieldOrdre;
@@ -36,12 +34,31 @@ public class ViewFX extends Application {
     ArrayList<TextField> sierpOpt = new ArrayList<>();
 
 
+    public ViewFX(ControllerG control){
+        this.control = control;
+        setFractalMenu();
+    }
+
+    public Parent asParent(){
+        return initPane;
+    }
+
+
     public void lockAll(){
         textFields.forEach(e -> {
             e.setEditable(false);
             e.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY,new CornerRadii(5), new Insets(1))));
+            e.setFocusTraversable(false);
         });
         colorChoice.setDisable(true);
+    }
+
+    public void haveController(){
+        if (control == null){
+           System.out.println("NO");
+        }else{
+            System.out.println("YES YES YES");
+        }
     }
 
     public void unlockJulMand(){
@@ -61,7 +78,8 @@ public class ViewFX extends Application {
         });
     }
 
-    public void setFractalMenu(Stage stage){
+    public void setFractalMenu(){
+
         GridPane root = new GridPane();
 
         root.setPadding(new Insets(20));
@@ -107,7 +125,7 @@ public class ViewFX extends Application {
             image = new Image(file.toURI().toString());
             iv = new ImageView(image);
             previewImage.getChildren().add(iv);
-            stage.show();
+
         });
 
         VBox pasBox = new VBox();
@@ -205,7 +223,7 @@ public class ViewFX extends Application {
 
             switch (typechoice.getValue()){
                 case "Julia","Mandelbrot" -> {
-                    opt.add(fieldConstantR.getText() + "+" + fieldConstantI.getText());
+                    opt.add(fieldConstantR.getText() + ";" + fieldConstantI.getText());
                     opt.add(fieldRect.getText());
                     opt.add(fieldPas.getText());
                     opt.add(fieldFonc.getText());
@@ -217,7 +235,7 @@ public class ViewFX extends Application {
                     control.fractalLaunch(opt);
                 }
             }
-            showFractal(fractal, stage);
+            showAlertOpt(control.fractalLaunch(opt));
         });
 
 
@@ -272,14 +290,33 @@ public class ViewFX extends Application {
         previewImage.setMinSize(500,500);
         previewImage.setPrefSize(500,500);
         root.add(previewImage,0,1,1,6);
+        initPane = root;
+    }
 
-        Scene scene = new Scene(root, 1000, 600);
-        stage.setScene(scene);
+    public void showFractalS(Fractal fractal, int[][] tab_ind, Stage stage){
+        int tabLength = ((Sierpinski)fractal).getTab().length;
+        WritableImage image = new WritableImage(tabLength,tabLength);
+        ImageView view = new ImageView();
+        for (int i = 0;i<tabLength;i++){
+            for (int j = 0; j< tabLength;j++){
+                int c = fractal.coloration(tab_ind[i][j]);
+                if (((Sierpinski)fractal).getTab()[i][j] == 0){
+                    image.getPixelWriter().setArgb(i,j,c);
+                } else {
+                    image.getPixelWriter().setArgb(i,j, java.awt.Color.BLACK.getRGB());
+                }
+            }
+        }
+
+        view.setImage(image);
+        Pane pane = new Pane();
+        pane.getChildren().add(view);
+        stage.setScene(new Scene(pane, 500, 500));
         stage.show();
     }
 
 
-    public void showFractal(Fractal fractal,Stage stage){
+    public void showFractalJM(Fractal fractal,Stage stage){
         double[][] rectangle = fractal.getRect();
         double pas = fractal.getPas();
         double width = (rectangle[0][1] - rectangle[0][0])/pas;
@@ -300,19 +337,6 @@ public class ViewFX extends Application {
         stage.setScene(new Scene(pane, width, height));
         stage.show();
     }
-
-
-    @Override
-    public void start(Stage stage) {
-        stage.setTitle("Fractals");
-        stage.setAlwaysOnTop(true);
-        Fonction func = new Fonction.BuilderFonction(new Complex.Builder(0.285, 0.01).build()).build();
-        double[] rect = {-1,1,-1,1};
-        this.fractal = new BuilderFractal().type("J").rect(rect).pas(0.004).fonction(func).build();
-        System.out.println(Arrays.deepToString(fractal.getRect()));
-        setFractalMenu(stage);
-    }
-
 
     public void showAlertOpt(ArrayList<String> errOpt){
         if (errOpt.isEmpty()){
@@ -338,13 +362,21 @@ public class ViewFX extends Application {
         alert.showAndWait();
     }
 
-
-    public static void main(String[] args) {
-        launch();
+    public ControllerG getControl() {
+        return control;
     }
 
     public Stage getMainStage() {
         return mainStage;
+    }
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public void setControl(ControllerG control) {
+        System.out.println("HERE");
+        this.control = control;
     }
 }
 

@@ -126,4 +126,7 @@ public class Sierpinski extends Fractal{
         writer.close();
     }
 
+    public int[][] getTab() {
+        return tab;
+    }
 }
