@@ -1,30 +1,22 @@
 package Controller;
 
 import Application.UIApp;
-import Model.*;
 
+import Model.*;
 import org.apache.commons.cli.*;
 
-import javax.swing.text.View;
 import java.io.IOException;
 import java.util.LinkedList;
 
 public class Launcher {
 
-    static Options opt = Command.createOptionDemarrage();
+    static Options opt = CommandApache.createOptionDemarrage();
 
     /*
      * ***************************************************** *
      * Verifie le format des arguments de la ligne de commande
      * ***************************************************** *
      */
-
-    public static boolean isNumber(char a){
-        return switch (a) {
-            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> true;
-            default -> false;
-        };
-    }
 
     //rectangle
     public static double[] correctFormatRect(String rect){
@@ -44,21 +36,18 @@ public class Launcher {
     //pas
     public static double correctFormatPas(String pas){
         try {
+            System.out.println(pas);
+            System.out.println(Double.parseDouble(pas));
             return Double.parseDouble(pas);
         } catch (Exception e){
             errorParsing();
         }
-        return 0;
+        return -1;
     }
 
     public static int correctFormatIte(String it){
         try {
-            int i = Integer.parseInt(it);
-            if (i < 1){
-                errorParsing();
-            }else{
-                return i;
-            }
+            return Integer.parseInt(it);
         } catch (Exception e){
             errorParsing();
         }

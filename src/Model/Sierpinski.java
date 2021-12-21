@@ -1,6 +1,5 @@
 package Model;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,28 +9,30 @@ import java.nio.charset.StandardCharsets;
 
 public class Sierpinski extends Fractal{
 
-    int ordre;
-    int[][] tab;
+    private final int ordre;
+    private double[][] tab;
+    private final int color;
+    private final String fic;
 
     public Sierpinski(BuilderFractal builderFractal){
-        super();
         this.color = builderFractal.color;
         this.fic = builderFractal.fic;
         this.ordre = builderFractal.ordre;
-        this.tab = new int[(int) Math.pow(3, this.ordre)][(int) Math.pow(3, this.ordre)];
-        init();
+        this.tab = init();
+        this.tab = createRect();
     }
 
-    public void init(){
-        for (int i = 0; i < this.tab.length;i++){
-            for (int j = 0; j < this.tab[0].length;j++){
-                this.tab[i][j] = 0;
+    public double[][] init(){
+        double[][] tab  = new double[(int) Math.pow(3, this.ordre)][(int) Math.pow(3, this.ordre)];
+        for (int i = 0; i < tab.length;i++){
+            for (int j = 0; j < tab[0].length;j++){
+                tab[i][j] = 0;
             }
         }
+        return tab;
     }
 
-
-    public int[][] construct(int compt, int i1, int i2, int j1, int j2){
+    public double[][] construct(int compt, int i1, int i2, int j1, int j2){
         if (compt < this.ordre){
             int li1 = i1 + (i2 - i1)/3;
             int li2 = i1 + 2*(i2 - i1)/3;
@@ -48,7 +49,7 @@ public class Sierpinski extends Fractal{
             }
             for (int i = li1; i < li2; i++) {
                 for (int j = lj1; j < lj2; j++) {
-                    this.tab[i][j] = 1;
+                    tab[i][j] = 1;
                 }
             }
             int nv = compt + 1;
@@ -61,21 +62,39 @@ public class Sierpinski extends Fractal{
             construct(nv, li2 , i2, lj1, lj2);
             construct(nv, li2 , i2, lj2, j2);
         }
-        return this.tab;
+        return tab;
+    }
+
+
+    /*
+     * ***************************************************** *
+     *                     Fonctions
+     * ***************************************************** *
+     */
+
+
+    @Override
+    public double[][] getTableau() {
+        return this.tab.clone();
+    }
+
+    @Override
+    public String getFichier() {
+        return fic;
     }
 
 
     @Override
-    public int[][] createRect(){
+    public double[][] createRect(){
         return construct(0, 0, this.tab.length, 0 , this.tab.length);
     }
 
     @Override
-    public BufferedImage createImg(int[][] tab_ind){
+    public BufferedImage createImg(double[][] tab_ind){
         BufferedImage img = new BufferedImage(this.tab.length, this.tab.length, BufferedImage.TYPE_INT_RGB);
         for (int i = 0;i<this.tab.length;i++){
             for (int j = 0; j< this.tab[0].length;j++){
-                int c = this.coloration(tab_ind[i][j]);
+                int c = this.coloration((int) tab_ind[i][j]);
                 if (this.tab[i][j] == 0){
                     img.setRGB(i,j,c);
                 } else {
@@ -126,7 +145,8 @@ public class Sierpinski extends Fractal{
         writer.close();
     }
 
-    public int[][] getTab() {
+    public double[][] getTab() {
         return tab;
     }
+
 }

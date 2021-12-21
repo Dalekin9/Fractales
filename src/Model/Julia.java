@@ -9,15 +9,31 @@ import java.nio.charset.StandardCharsets;
 
 public class Julia extends Fractal{
 
+    private final double[][] rect;
+    private final double[][] data;
+    private final double pas; //pas pr la fonction
+    private final int iter; //nb d'iteration max de la fonction
+    private final int color; // 0 (noir/blanc) 1 (rouge) 2 (bleu) 3 (vert) 4 (multicolor)
+    private final String fic; //nom pour le fichier
+    private final Fonction function;
+
     Julia(BuilderFractal builderFractal){
-        super();
         this.rect = builderFractal.rect;
         this.pas = builderFractal.pas;
         this.iter = builderFractal.iter;
         this.color = builderFractal.color;
         this.fic = builderFractal.fic;
         this.function = builderFractal.function;
+        this.data = createRect();
     }
+
+
+    /*
+     * ***************************************************** *
+     *                     Fonctions
+     * ***************************************************** *
+     */
+
 
     public int divergenceIndex (Complex z0){
         int ite = 0;
@@ -31,10 +47,27 @@ public class Julia extends Fractal{
     }
 
     @Override
-    public int[][] createRect(){
+    public double[][] getTableau() {
+        return this.data;
+    }
+
+    @Override
+    public String getFichier() {
+        return fic;
+    }
+
+    @Override
+    public double[][] createRect(){
         double w = (this.rect[0][1] - this.rect[0][0])/this.pas;
         double h = (this.rect[1][1] - this.rect[1][0])/this.pas;
-        int[][] tab_ind = new int[(int)w][(int)h];
+        System.out.println(this.rect[0][0]);
+        System.out.println(this.rect[0][1]);
+        System.out.println(this.rect[1][0]);
+        System.out.println(this.rect[1][1]);
+        System.out.println(this.pas);
+        System.out.println(w);
+        System.out.println(h);
+        double[][] d = new double[(int)w][(int)h];
         int compi=0;
         double mult = chercheMult(this.pas);
         System.out.println(mult);
@@ -45,24 +78,24 @@ public class Julia extends Fractal{
             while( i < this.rect[1][1]){
                 Complex c = new Complex.Builder(rl,i).build();
                 int ind = this.divergenceIndex(c);
-                tab_ind[compi][compj] = ind;
+                d[compi][compj] = ind;
                 compj++;
                 i = Math.round( (i + this.pas)*mult ) / mult;
             }
             compi++;
             rl = Math.round( (rl + this.pas)*mult ) / mult;
         }
-        return tab_ind;
+        return d;
     }
 
     @Override
-    public BufferedImage createImg(int[][] tab_ind){
+    public BufferedImage createImg(double[][] tab_ind){
         double w = (this.rect[0][1] - this.rect[0][0])/this.pas;
         double h = (this.rect[1][1] - this.rect[1][0])/this.pas;
         BufferedImage img = new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
         for (int i = 0;i<tab_ind.length;i++){
             for (int j = 0; j< tab_ind[0].length;j++){
-                int c = this.coloration(tab_ind[i][j]);
+                int c = this.coloration((int) tab_ind[i][j]);
                 //int r = c.getRed(); int g = c.getGreen(); int b = c.getBlue();
                 //int col = (r << 16) | (g << 8) | b;
                 img.setRGB(i,j,c);
@@ -71,45 +104,7 @@ public class Julia extends Fractal{
         return img;
     }
 
-    public Color colorationG(int val) {
-        float s = (float) ( 30 + (val * 360)/this.iter ) /360;
-        float bb = (float) ( 30 + (val * 360)/this.iter ) /360;
-        if (val == this.iter) {
-            return new Color(0, 0, 0);
-        }
-        switch (this.color) {
-            case 0 -> {
-                int r = (255 * val) / this.iter;
-                int g = (255 * val) / this.iter;
-                int b = (255 * val) / this.iter;
-                return new Color(r,g,b);
-            }
-            case 1 -> {
-                int res = -42 + (val * 84 / this.iter);
-                if (res < 0) {
-                    return new Color(Color.HSBtoRGB((float) (360-res)/360, s, bb));
-                } else {
-                    return new Color(Color.HSBtoRGB((float) (res)/360, s, bb));
-                }
-            }
-            case 2 -> {
-                int res = 216 + (val * 120 / this.iter);
-                return new Color(Color.HSBtoRGB((float) (res)/360, s, bb));
-            }
-            case 3 -> {
-                int res = 96 + (val * 120 / this.iter);
-                return new Color(Color.HSBtoRGB((float) (res)/360, s, bb));
-            }
-            case 4 -> {
-                int res = (val * 360 / this.iter);
-                return new Color(Color.HSBtoRGB((float) (res)/360, 0.8F, 0.8F));
-            }
-            default -> {
-                return Color.BLACK;
-            }
-        }
-    }
-
+    @Override
     public int coloration(int val) {
         float s = (float) ( 30 + (val * 360)/this.iter ) /360;
         float bb = (float) ( 30 + (val * 360)/this.iter ) /360;

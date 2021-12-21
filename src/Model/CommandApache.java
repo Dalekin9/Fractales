@@ -3,9 +3,9 @@ package Model;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-public class Command {
+public class CommandApache {
 
-    public Command(){}
+    public CommandApache(){}
 
     public static Options createOptionDemarrage(){
         Options options = new Options();
@@ -96,7 +96,7 @@ public class Command {
                 .required(false)
                 .build());
 
-        //type
+        //ordre
         options.addOption(Option.builder("o")
                 .longOpt("ord")
                 .hasArg(true)

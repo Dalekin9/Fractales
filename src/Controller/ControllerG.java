@@ -224,7 +224,6 @@ public class ControllerG {
                     }
                 }
 
-
                 int ite = validIte(opt.get(7));
                 if (ite == -1){
                     err.add("it");
@@ -235,8 +234,6 @@ public class ControllerG {
                     fractale = fract.build();
                     view.showFractalJM(fractale, view.getMainStage());
                 }
-
-
             }
             case "Sierpinski" -> {
                 fract = fract.type("S").fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2)));
@@ -248,21 +245,12 @@ public class ControllerG {
                 }
                 if(err.isEmpty()) {
                     fractale = fract.build();
-                    view.showFractalS(fractale, fractale.createRect(),view.getMainStage());
+                    view.showFractalS(fractale, view.getMainStage());
                 }
             }
         }
 
         return err;
-    }
-
-
-    public void viewHasControl(){
-        if (view.getControl() == null){
-            System.out.println("NO");
-        }else{
-            System.out.println("YES");
-        }
     }
 
     public void setView(ViewFX view) {

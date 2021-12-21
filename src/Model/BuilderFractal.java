@@ -1,15 +1,11 @@
 package Model;
 
-import java.util.LinkedList;
-import java.util.function.Function;
 
 public class BuilderFractal {
 
-    //required
     protected double[][] rect;
     protected double pas;
     protected Fonction function;
-    //optionnel
     protected int iter;
     protected int color;
     protected String fic;
@@ -17,8 +13,8 @@ public class BuilderFractal {
     protected String type;
 
     public BuilderFractal(){
-        this.rect = new double[][]{{0, 0}, {0, 0}};
-        this.pas = 0;
+        this.rect = new double[][]{{-1, 1}, {-1, 1}};
+        this.pas = 0.10;
         this.iter = 1000;
         this.color = 0;
         this.fic = "Fractale";

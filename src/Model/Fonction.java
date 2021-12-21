@@ -1,27 +1,25 @@
 package Model;
 
 import java.util.LinkedList;
+import java.util.function.Function;
 
-public class Fonction implements java.util.function.Function {
+public class Fonction implements Function{
 
-    // 5x² = {5,2}
+
     private LinkedList<double[]> coeff;
-
-    //constante de la fonction
     private Complex c;
-
 
     public static class BuilderFonction {
 
         // 5x² = {5,2}
         private LinkedList<double[]> coeff = new LinkedList<>();
-
         //constante de la fonction
         private Complex c;
 
         public BuilderFonction (Complex c){
             this.c = c;
             coeff.add(new double[]{1, 2});
+
         }
 
         public BuilderFonction coef (LinkedList<double[]> c){
@@ -43,8 +41,19 @@ public class Fonction implements java.util.function.Function {
         return coeff;
     }
 
+    @Override
+    public String toString() {
+        return "Fonction{" +
+                "coeff=" + coeff +
+                ", c=" + c +
+                '}';
+    }
+
+
     /*
-    --------Fonctions---------
+     * ***************************************************** *
+     *                     Fonction
+     * ***************************************************** *
      */
 
     @Override
@@ -61,11 +70,4 @@ public class Fonction implements java.util.function.Function {
         return res;
     }
 
-    @Override
-    public String toString() {
-        return "Fonction{" +
-                "coeff=" + coeff +
-                ", c=" + c +
-                '}';
-    }
 }

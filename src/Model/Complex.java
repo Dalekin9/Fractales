@@ -30,32 +30,9 @@ public class Complex {
         return p_reel + " + i"+ p_img;
     }
 
-    /*********************************************************
-     *********************************************************
-     *****************GETTERS AND SETTERS*********************
-     *********************************************************
-     ********************************************************/
-
-    public double getP_img() {
-        return p_img;
-    }
-
-    public double getP_reel() {
-        return p_reel;
-    }
-
-    public void setP_img(double p_img) {
-        this.p_img = p_img;
-    }
-
-    public void setP_reel(double p_reel) {
-        this.p_reel = p_reel;
-    }
 
     /*********************************************************
-     *********************************************************
      **********************OPERATIONS*************************
-     *********************************************************
      ********************************************************/
 
     //Addition
@@ -71,31 +48,19 @@ public class Complex {
         return new Complex( new Builder( pr, pi ));
     }
 
-    //Division
-    public Complex div(Complex b){
-        double ra = (this.p_reel*b.p_reel + this.p_img*b.p_img) / (b.p_reel*b.p_reel + b.p_img*b.p_img);
-        double ia = (this.p_img*b.p_reel - this.p_reel*b.p_img) / (b.p_reel*b.p_reel + b.p_img*b.p_img);
-        return new Complex( new Builder( ra, ia ));
-    }
-
-
-    //Substraction
-    public Complex sub(Complex b){
-        return new Complex( new Builder ( (this.p_reel - b.p_reel), (this.p_img - b.p_img) ));
-    }
-
+    //Module
     public double module(){
         return Math.sqrt( (this.p_reel * this.p_reel) + (this.p_img * this.p_img));
     }
 
-    public Complex puissance(Complex a, double puissance){
+    //puissance
+    public Complex puissance(Complex c, double puissance){
         if (puissance == 1 ){
-            return a;
+            return c;
         } else {
-            Complex res = a; //x * x
+            Complex res = c;
             for (double i = 1; i < puissance; i += 1) {
-                res=res.mul(a);
-                //System.out.println(res);
+                res=res.mul(c);
             }
             return res;
         }
