@@ -5,7 +5,6 @@ import Model.*;
 
 import org.apache.commons.cli.*;
 
-import javax.swing.text.View;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -59,12 +58,7 @@ public class Launcher {
      */
     public static int correctFormatIte(String it){
         try {
-            int i = Integer.parseInt(it);
-            if (i < 1){
-                errorParsing();
-            }else{
-                return i;
-            }
+            return Integer.parseInt(it);
         } catch (Exception e){
             errorParsing();
         }

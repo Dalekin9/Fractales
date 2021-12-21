@@ -293,13 +293,15 @@ public class ViewFX {
         initPane = root;
     }
 
-    public void showFractalS(Fractal fractal, int[][] tab_ind, Stage stage){
+    public void showFractalS(Fractal fractal, Stage stage){
+        double[][] tab_ind = fractal.getTableau();
         int tabLength = ((Sierpinski)fractal).getTab().length;
+
         WritableImage image = new WritableImage(tabLength,tabLength);
         ImageView view = new ImageView();
         for (int i = 0;i<tabLength;i++){
             for (int j = 0; j< tabLength;j++){
-                int c = fractal.coloration(tab_ind[i][j]);
+                int c = fractal.coloration((int)tab_ind[i][j]);
                 if (((Sierpinski)fractal).getTab()[i][j] == 0){
                     image.getPixelWriter().setArgb(i,j,c);
                 } else {
@@ -311,30 +313,27 @@ public class ViewFX {
         view.setImage(image);
         Pane pane = new Pane();
         pane.getChildren().add(view);
-        stage.setScene(new Scene(pane, 500, 500));
+        stage.setScene(new Scene(pane, tab_ind[0].length, tab_ind.length));
         stage.show();
     }
 
 
     public void showFractalJM(Fractal fractal,Stage stage){
-        double[][] rectangle = fractal.getRect();
-        double pas = fractal.getPas();
-        double width = (rectangle[0][1] - rectangle[0][0])/pas;
-        double height = (rectangle[1][1] -rectangle[1][0])/pas;
-        int[][] tab_index = fractal.createRect();
-
-        WritableImage image = new WritableImage((int)width, (int)height);
+        double[][] tab_index = fractal.getTableau();
+        WritableImage image = new WritableImage(tab_index[0].length, tab_index.length);
         ImageView view = new ImageView();
-        for (int i = 0;i<tab_index.length;i++){
+
+        for (int i = 0;i< tab_index.length;i++){
             for (int j = 0; j< tab_index[0].length;j++){
-                int c = fractal.coloration(tab_index[i][j]);
-                image.getPixelWriter().setArgb(i,j, c);
+                int c = fractal.coloration((int)tab_index[i][j]);
+                image.getPixelWriter().setArgb(i,j,c);
             }
         }
+
         view.setImage(image);
         Pane pane = new Pane();
         pane.getChildren().add(view);
-        stage.setScene(new Scene(pane, width, height));
+        stage.setScene(new Scene(pane, tab_index[0].length, tab_index.length));
         stage.show();
     }
 
