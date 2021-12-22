@@ -1,81 +1,100 @@
 package Model;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ForkJoinPool;
+
+import static java.lang.System.exit;
 
 public class Sierpinski extends Fractal{
 
-    int ordre;
-    int[][] tab;
+    private final int ordre;
+    private double[][] tab;
+    private final int color;
+    private final String fic;
 
     public Sierpinski(BuilderFractal builderFractal){
-        super();
         this.color = builderFractal.color;
         this.fic = builderFractal.fic;
         this.ordre = builderFractal.ordre;
-        this.tab = new int[(int) Math.pow(3, this.ordre)][(int) Math.pow(3, this.ordre)];
-        init();
+        this.tab = init();
+        this.tab = createRect();
     }
 
-    public void init(){
-        for (int i = 0; i < this.tab.length;i++){
-            for (int j = 0; j < this.tab[0].length;j++){
-                this.tab[i][j] = 0;
-            }
-        }
-    }
-
-
-    public int[][] construct(int compt, int i1, int i2, int j1, int j2){
-        if (compt < this.ordre){
-            int li1 = i1 + (i2 - i1)/3;
-            int li2 = i1 + 2*(i2 - i1)/3;
-            if (i2 - i1 == 3){
-                li1 = i1 + 1;
-                li2 = i1 + 2;
-            }
-
-            int lj1 = j1 + (j2 - j1)/3;
-            int lj2 = j1 +2*(j2 - j1)/3;
-            if (j2 - j1 == 3){
-                lj1 = j1 + 1;
-                lj2 = j1 + 2;
-            }
-            for (int i = li1; i < li2; i++) {
-                for (int j = lj1; j < lj2; j++) {
-                    this.tab[i][j] = 1;
+    /**
+     * Initialise le tableau de données tab
+     * pas de retour
+     */
+    public double[][] init(){
+        try {
+            double[][] tab = new double[(int) Math.pow(3, this.ordre)][(int) Math.pow(3, this.ordre)];
+            for (int i = 0; i < tab.length; i++) {
+                for (int j = 0; j < tab[0].length; j++) {
+                    tab[i][j] = 0;
                 }
             }
-            int nv = compt + 1;
-            construct(nv, i1 , li1, j1, lj1);
-            construct(nv, i1 , li1, lj1, lj2);
-            construct(nv, i1 , li1, lj2, j2);
-            construct(nv, li1 , li2, j1, lj1);
-            construct(nv, li1 , li2, lj2, j2);
-            construct(nv, li2 , i2, j1, lj1);
-            construct(nv, li2 , i2, lj1, lj2);
-            construct(nv, li2 , i2, lj2, j2);
+            return tab;
+        } catch (Error e){
+            System.out.println("Pas assez d'espace memoire.\nVeuillez reduire l'ordre.");
+            exit(0);
         }
-        return this.tab;
+        return null;
+    }
+
+    /**
+     * Construit le tableau de données tab
+     * @param compt : compteur pour savoir à quel ordre on se situe
+     * @param i1 : 1ere position i dans le tableau
+     * @param i2 : derniere position i dans le tableau
+     * @param j1 : 1ere position j dans le tableau
+     * @param j2 : derniere position j dans le tableau
+     * @return le tableau de données tab remplis
+     */
+    public double[][] construct(int compt, int i1, int i2, int j1, int j2){
+        try {
+            ActionSierp work = new ActionSierp(ordre, tab, compt, i1, i2, j1, j2);
+            ForkJoinPool pool = new ForkJoinPool();
+            pool.invoke(work);
+            return tab;
+        } catch (Error e){
+            System.out.println("Pas assez d'espace memoire.\nVeuillez reduire l'ordre.");
+            exit(0);
+        }
+        return null;
+    }
+
+    /*
+     * ***************************************************** *
+     *                     Fonctions
+     * ***************************************************** *
+     */
+
+    @Override
+    public double[][] getTableau() {
+        return this.tab.clone();
+    }
+
+    @Override
+    public String getFichier() {
+        return fic;
     }
 
 
     @Override
-    public int[][] createRect(){
+    public double[][] createRect(){
         return construct(0, 0, this.tab.length, 0 , this.tab.length);
     }
 
     @Override
-    public BufferedImage createImg(int[][] tab_ind){
+    public BufferedImage createImg(double[][] data){
         BufferedImage img = new BufferedImage(this.tab.length, this.tab.length, BufferedImage.TYPE_INT_RGB);
         for (int i = 0;i<this.tab.length;i++){
             for (int j = 0; j< this.tab[0].length;j++){
-                int c = this.coloration(tab_ind[i][j]);
+                int c = this.coloration((int) data[i][j]);
                 if (this.tab[i][j] == 0){
                     img.setRGB(i,j,c);
                 } else {
@@ -87,7 +106,7 @@ public class Sierpinski extends Fractal{
     }
 
     @Override
-    public int coloration(int val) {
+    public int coloration(double val) {
         switch (this.color) {
             case 0 -> {
                 return Color.WHITE.getRGB();

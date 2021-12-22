@@ -1,109 +1,139 @@
 package Model;
 
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ForkJoinPool;
+
+import static java.lang.System.exit;
 
 public class Julia extends Fractal{
 
-    Julia(BuilderFractal builderFractal){
-        super();
+    private final double[][] rect;
+    private final double[][] data;
+    private final double pas;
+    private final int iter;
+    private final int color;
+    private final String fic;
+    private final Fonction function;
+
+    Julia(BuilderFractal builderFractal) {
         this.rect = builderFractal.rect;
         this.pas = builderFractal.pas;
         this.iter = builderFractal.iter;
         this.color = builderFractal.color;
         this.fic = builderFractal.fic;
         this.function = builderFractal.function;
+        this.data = createRect();
     }
 
-    public int divergenceIndex (Complex z0){
-        int ite = 0;
-        Complex zn = z0;
-        // sortie de boucle si divergence
-        while (ite < this.iter - 1 && zn.module() <=2){
-            zn = this.function.apply(zn);
-            ite++;
-        }
-        return ite;
+
+    /*
+     * ***************************************************** *
+     *                     Fonctions
+     * ***************************************************** *
+     */
+
+    @Override
+    public double[][] getTableau() {
+        return this.data;
     }
 
     @Override
-    public int[][] createRect(){
-        double w = (this.rect[0][1] - this.rect[0][0])/this.pas;
-        double h = (this.rect[1][1] - this.rect[1][0])/this.pas;
-        int[][] tab_ind = new int[(int)w][(int)h];
-        int compi=0;
-        double mult = chercheMult(this.pas);
-        System.out.println(mult);
-        double rl = this.rect[0][0];
-        while (rl < this.rect[0][1]){
-            int compj = 0;
-            double i = this.rect[1][0];
-            while( i < this.rect[1][1]){
-                Complex c = new Complex.Builder(rl,i).build();
-                int ind = this.divergenceIndex(c);
-                tab_ind[compi][compj] = ind;
-                compj++;
-                i = Math.round( (i + this.pas)*mult ) / mult;
-            }
-            compi++;
-            rl = Math.round( (rl + this.pas)*mult ) / mult;
-        }
-        return tab_ind;
+    public String getFichier() {
+        return fic;
     }
 
     @Override
-    public BufferedImage createImg(int[][] tab_ind){
-        double w = (this.rect[0][1] - this.rect[0][0])/this.pas;
-        double h = (this.rect[1][1] - this.rect[1][0])/this.pas;
-        BufferedImage img = new BufferedImage((int)w, (int)h, BufferedImage.TYPE_INT_RGB);
-        for (int i = 0;i<tab_ind.length;i++){
-            for (int j = 0; j< tab_ind[0].length;j++){
-                int c = this.coloration(tab_ind[i][j]);
-                //int r = c.getRed(); int g = c.getGreen(); int b = c.getBlue();
-                //int col = (r << 16) | (g << 8) | b;
-                img.setRGB(i,j,c);
+    public double[][] createRect() {
+        try {
+            double w = (this.rect[0][1] - this.rect[0][0]) / this.pas;
+            double h = (this.rect[1][1] - this.rect[1][0]) / this.pas;
+            double[][] d = new double[(int) h][(int) w];
+            int total = (d.length * d[0].length);
+            ActionJulia work = new ActionJulia(0, total, d, pas, this.rect[0][0], this.rect[1][0], function, iter, total / 10);
+            ForkJoinPool pool = new ForkJoinPool();
+            pool.invoke(work);
+            return d;
+        } catch (Error e){
+            System.out.println("Pas assez d'espace memoire.\nVeuillez reduire le pas ou le rectangle.");
+            exit(0);
+        }
+        return null;
+    }
+
+    @Override
+    public BufferedImage createImg(double[][] data){
+        BufferedImage img = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0;i<data.length;i++){
+            for (int j = 0; j< data[0].length;j++){
+                img.setRGB(j,i,coloration(data[i][j]));
             }
         }
         return img;
     }
 
     @Override
-    public int coloration(int val) {
-        float s = (float) ( 30 + (val * 360)/this.iter ) /360;
-        float bb = (float) ( 30 + (val * 360)/this.iter ) /360;
+    public int coloration(double val) {
         if (val == this.iter) {
             return new Color(0,0,0).getRGB();
         }
         switch (this.color) {
             case 0 -> {
-                int r = (255 * val) / this.iter;
-                int g = (255 * val) / this.iter;
-                int b = (255 * val) / this.iter;
+                int r = (int) ((255 * val) / this.iter);
+                int g = (int) ((255 * val) / this.iter);
+                int b = (int) ((255 * val) / this.iter);
                 return new Color(r,g,b).getRGB();
             }
             case 1 -> {
-                int res = -42 + (val * 84 / this.iter);
-                if (res < 0) {
-                    return Color.HSBtoRGB((float) (360-res)/360, s, bb);
-                } else {
-                    return Color.HSBtoRGB((float) (res)/360, s, bb);
-                }
+                //40 = 0.11
+                //330 = 0.916
+                float res = (float) (0.916 + (0.194 * (val / this.iter)));
+                return Color.HSBtoRGB(res % 1 , (float)val/iter, (float)val/iter);
+
             }
             case 2 -> {
-                int res = 216 + (val * 120 / this.iter);
-                return Color.HSBtoRGB((float) (res)/360, s, bb);
+                //180 = 0.5
+                //270 = 0.75
+                float res = (float) (0.5 + (0.25 * (val / this.iter)));
+                return Color.HSBtoRGB(res, (float)val/iter, (float)val/iter);
             }
             case 3 -> {
-                int res = 96 + (val * 120 / this.iter);
-                return Color.HSBtoRGB((float) (res)/360, s, bb);
+                //75 = 0.208
+                //160 = 0.44
+                float res = (float) (0.208 + ( 0.232 * (val / this.iter)));
+                return Color.HSBtoRGB( res, (float)val/iter, (float)val/iter);
             }
             case 4 -> {
-                int res = (val * 360 / this.iter);
-                return Color.HSBtoRGB((float) (res)/360, 0.8F, 0.8F);
+                float res = (float) (val / this.iter);
+                return Color.HSBtoRGB( res, (float)val/iter, (float)val/iter);
+            }
+            case 5 -> { //rose-orange FF00FF
+                //y = ax + b
+                // a = orange - rose / iter
+                // b = jaune
+                double a = (Color.decode("#FF00FF").getRGB() - Color.decode("#F0CB75").getRGB()) / (double)iter;
+                double b = Color.decode("#F0CB75").getRGB();
+                return (int) ( (a * val) + b);
+            }
+            case 6 -> { //orange-rose
+                double a = (Color.decode("#F0CB75").getRGB() - Color.decode("#FF00FF").getRGB()) / (double)iter;
+                double b = Color.decode("#FF00FF").getRGB();
+                return (int) ( (a * val) + b);
+            }
+            case 7 -> { //vert-bleu
+                double a = (Color.decode("#79BFF0").getRGB() - Color.decode("#00ffb7").getRGB()) / (double)iter;
+                double b = Color.decode("#00ffb7").getRGB();
+                return (int) ( (a * val) + b);
+            }
+            case 8 -> { //vert-rose
+                double a = (Color.decode("#EB83F4").getRGB() - Color.decode("#87F075").getRGB()) / (double)iter;
+                double b = Color.decode("#87F075").getRGB();
+                return (int) ( (a * val) + b);
             }
             default -> {
                 return Color.BLACK.getRGB();

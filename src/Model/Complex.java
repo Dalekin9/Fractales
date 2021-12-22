@@ -2,8 +2,8 @@ package Model;
 
 public class Complex {
 
-    private double p_reel;
-    private double p_img;
+    private final double p_reel;
+    private final double p_img;
 
     public static class Builder {
 
@@ -30,40 +30,27 @@ public class Complex {
         return p_reel + " + i"+ p_img;
     }
 
-    /*********************************************************
-     *********************************************************
-     *****************GETTERS AND SETTERS*********************
-     *********************************************************
-     ********************************************************/
 
-    public double getP_img() {
-        return p_img;
-    }
+    /*
+     * ***************************************************** *
+     *                     Operations
+     * ***************************************************** *
+     */
 
-    public double getP_reel() {
-        return p_reel;
-    }
-
-    public void setP_img(double p_img) {
-        this.p_img = p_img;
-    }
-
-    public void setP_reel(double p_reel) {
-        this.p_reel = p_reel;
-    }
-
-    /*********************************************************
-     *********************************************************
-     **********************OPERATIONS*************************
-     *********************************************************
-     ********************************************************/
-
-    //Addition
+    /**
+     * Additionne deux complexes
+     * @param b : le complexe qu'on souhaite additionner
+     * @return l'addition de notre complexe et b
+     */
     public Complex add(Complex b){
         return new Complex( new Builder( (this.p_reel + b.p_reel), (this.p_img + b.p_img) ));
     }
 
-    //Multiplication
+    /**
+     * Multiplie deux complexes
+     * @param b : le complexe qu'on souhaite multiplier
+     * @return la multiplication entre notre complexe et b
+     */
     public Complex mul(Complex b){
         double pr = (this.p_reel * b.p_reel) - (this.p_img * b.p_img);
         double pi = ((this.p_reel + this.p_img)*(b.p_reel + b.p_img)) -
@@ -71,31 +58,27 @@ public class Complex {
         return new Complex( new Builder( pr, pi ));
     }
 
-    //Division
-    public Complex div(Complex b){
-        double ra = (this.p_reel*b.p_reel + this.p_img*b.p_img) / (b.p_reel*b.p_reel + b.p_img*b.p_img);
-        double ia = (this.p_img*b.p_reel - this.p_reel*b.p_img) / (b.p_reel*b.p_reel + b.p_img*b.p_img);
-        return new Complex( new Builder( ra, ia ));
-    }
-
-
-    //Substraction
-    public Complex sub(Complex b){
-        return new Complex( new Builder ( (this.p_reel - b.p_reel), (this.p_img - b.p_img) ));
-    }
-
+    /**
+     * Calcule le module du complexe
+     * @return le module du complexe
+     */
     public double module(){
         return Math.sqrt( (this.p_reel * this.p_reel) + (this.p_img * this.p_img));
     }
 
-    public Complex puissance(Complex a, double puissance){
+    /**
+     * Met un complexe sous une puissance
+     * @param c : complexe initial
+     * @param puissance : puissance voulue
+     * @return le complexe c passé a la puissance voulue
+     */
+    public Complex puissance(Complex c, double puissance){
         if (puissance == 1 ){
-            return a;
+            return c;
         } else {
-            Complex res = a; //x * x
+            Complex res = c;
             for (double i = 1; i < puissance; i += 1) {
-                res=res.mul(a);
-                //System.out.println(res);
+                res=res.mul(c);
             }
             return res;
         }
