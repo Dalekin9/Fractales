@@ -3,21 +3,21 @@ package Model;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-public class Command {
+public class CommandApache {
 
-    public Command(){}
+    public CommandApache(){}
 
     public static Options createOptionDemarrage(){
         Options options = new Options();
 
-        //graphique
+        //Graphique
         options.addOption(Option.builder("G")
                 .longOpt("graph")
                 .hasArg(false)
                 .desc("Mode Graphique")
                 .build());
 
-        //console
+        //Console
         options.addOption(Option.builder("C")
                 .longOpt("cons")
                 .hasArg(false)
@@ -87,7 +87,7 @@ public class Command {
                 .required(false)
                 .build());
 
-        //type
+        //type de la fractale
         options.addOption(Option.builder("t")
                 .longOpt("type")
                 .hasArg(true)
@@ -96,7 +96,7 @@ public class Command {
                 .required(false)
                 .build());
 
-        //type
+        //ordre (Sierpinski)
         options.addOption(Option.builder("o")
                 .longOpt("ord")
                 .hasArg(true)

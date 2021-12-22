@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class Launcher {
 
-    static Options opt = Command.createOptionDemarrage();
+    static Options opt = CommandApache.createOptionDemarrage();
 
     /*
      * ***************************************************** *
@@ -16,14 +16,11 @@ public class Launcher {
      * ***************************************************** *
      */
 
-    public static boolean isNumber(char a){
-        return switch (a) {
-            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> true;
-            default -> false;
-        };
-    }
-
-    //rectangle
+    /**
+     * Verifie le format d'entree du rectangle
+     * @param rect : le rectangle voulu
+     * @return un tableau de double correspondant au rectangle
+     */
     public static double[] correctFormatRect(String rect){
         String[] tab = rect.split(";");
         if (tab.length != 4){
@@ -38,16 +35,25 @@ public class Launcher {
         return null;
     }
 
-    //pas
+    /**
+     * Verifie le format d'entree du pas
+     * @param pas : pas voulu
+     * @return un double correspondant au pas
+     */
     public static double correctFormatPas(String pas){
         try {
             return Double.parseDouble(pas);
         } catch (Exception e){
             errorParsing();
         }
-        return 0;
+        return -1;
     }
 
+    /**
+     * Verifie le format d'entree du pas
+     * @param it : le nombre d'iteration voulu
+     * @return l'entier correspondant au nombre d'iteration
+     */
     public static int correctFormatIte(String it){
         try {
             return Integer.parseInt(it);
@@ -57,7 +63,11 @@ public class Launcher {
         return -1;
     }
 
-    //constante de fonction
+    /**
+     * Verifie le format d'entree de la constante de la fonction
+     * @param constante : la constante voulue
+     * @return un tableau de double correspondant a notre constante
+     */
     public static double[] correctFormatCst(String constante){
 
         String[] tab = constante.split(";");
@@ -74,6 +84,11 @@ public class Launcher {
 
     }
 
+    /**
+     * Calcule le nombre de x present dans un string
+     * @param s : la chaine de caracteres
+     * @return le nombre de x comptes
+     */
     public static int nbX(String s){
         int c = 0;
         for (int i = 0; i<s.length();i++){
@@ -84,7 +99,11 @@ public class Launcher {
         return c;
     }
 
-    //fonction
+    /**
+     * Verifie le format d'entree de la fonction
+     * @param fonction : la fonction voulue
+     * @return une liste de tableau de double correspondant aux coefficient de la fonction
+     */
     public static LinkedList<double[]> correctFormatFct(String fonction){
         String[] aftPlus = fonction.split("\\+");
         if (! aftPlus[aftPlus.length-1].equals("c")){
@@ -140,9 +159,14 @@ public class Launcher {
         return null;
     }
 
-    //coloration
+    /**
+     * Verifie le format d'entree de la coloration
+     * @param c : coloration voulue
+     * @return l'entier correspondant a la coloration
+     */
     public static int correctFormatColor(String c){
-        if (c.equals("0") || c.equals("1") || c.equals("2") || c.equals("3") || c.equals("4") ){
+        if (c.equals("0") || c.equals("1") || c.equals("2") || c.equals("3") || c.equals("4") ||
+                c.equals("5") || c.equals("6") ||  c.equals("7") || c.equals("8")){
             return Integer.parseInt(c);
         } else {
             errorParsing();
@@ -150,7 +174,11 @@ public class Launcher {
         return -1;
     }
 
-    //coloration
+    /**
+     * Verifie le format d'entree du type de fractale
+     * @param c : type de fractale voulu
+     * @return le type souhaite
+     */
     public static String correctFormatType(String c){
         if (c.equals("J") || c.equals("M") || c.equals("S")){
             return c;
@@ -160,7 +188,11 @@ public class Launcher {
         return "";
     }
 
-    //coloration
+    /**
+     * Verifie le format d'entree de l'ordre
+     * @param c : ordre voulu
+     * @return l'entier correspondant a l'ordre
+     */
     public static int correctFormatOrdre(String c){
         try {
             int o = (int)Double.parseDouble(c);
@@ -176,13 +208,16 @@ public class Launcher {
         return -1;
     }
 
-
     /*
-     * ****************************** *
-     * Partie du lancement du Programme
-     * ****************************** *
+     * ***************************************************** *
+     *              Lancement du Programme
+     * ***************************************************** *
      */
 
+    /**
+     * Fonction qui intervient lors d'une erreur de Parsing :
+     * Mauvais parametres, arguments non valides....
+     */
     public static void errorParsing(){
         System.out.println("Error parsing command-line arguments!");
         System.out.println("Please, follow the instructions below:");
@@ -191,6 +226,10 @@ public class Launcher {
         System.exit(0);
     }
 
+    /**
+     * Fonction principale de lancement du programme
+     * @param args : la ligne de commande
+     */
     public static void main(String[] args) throws IOException {
 
         //parser la ligne de commande
