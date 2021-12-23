@@ -4,27 +4,32 @@ import Controller.ControllerG;
 import Model.Fractal;
 import Model.Sierpinski;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.embed.swing.SwingFXUtils;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
 public class ViewFX {
 
-    private GridPane initPane;
-    private ControllerG control;
+    private final ControllerG control;
     private Stage mainStage;
     Pane previewImage = new Pane();
     ChoiceBox<String> colorChoice;
@@ -36,49 +41,34 @@ public class ViewFX {
 
     public ViewFX(ControllerG control){
         this.control = control;
-        setFractalMenu();
     }
-
-    public Parent asParent(){
-        return initPane;
-    }
-
 
     public void lockAll(){
         textFields.forEach(e -> {
-            e.setEditable(false);
-            e.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY,new CornerRadii(5), new Insets(1))));
             e.setFocusTraversable(false);
+            e.setDisable(true);
         });
         colorChoice.setDisable(true);
     }
 
-    public void haveController(){
-        if (control == null){
-           System.out.println("NO");
-        }else{
-            System.out.println("YES YES YES");
-        }
-    }
 
     public void unlockJulMand(){
         julMandOpt.forEach(e -> {
-            e.setEditable(true);
             e.setBackground(Background.EMPTY);
             e.setStyle("-fx-text-box-border: #000000; -fx-focus-color: #000000;");
-
+            e.setDisable(false);
         });
     }
 
     public void unlockSierp(){
         sierpOpt.forEach(e -> {
-            e.setEditable(true);
             e.setBackground(Background.EMPTY);
             e.setStyle("-fx-text-box-border: #000000; -fx-focus-color: #000000;");
+            e.setDisable(false);
         });
     }
 
-    public void setFractalMenu(){
+    public void showSetMenu(){
 
         GridPane root = new GridPane();
 
@@ -124,6 +114,9 @@ public class ViewFX {
             colorChoice.setDisable(false);
             image = new Image(file.toURI().toString());
             iv = new ImageView(image);
+            iv.resize(500,500);
+            previewImage.resize(500,500);
+            previewImage.getChildren().clear();
             previewImage.getChildren().add(iv);
 
         });
@@ -188,7 +181,6 @@ public class ViewFX {
         textFields.add(fieldConstantR);
         julMandOpt.add(fieldConstantR);
 
-        fieldConstantR.setEditable(false);
         TextField fieldConstantI = new TextField();
         fieldConstantI.setPrefWidth(70);
         textFields.add(fieldConstantI);
@@ -217,6 +209,10 @@ public class ViewFX {
         Button loginButton = new Button("Créer votre fractale");
         loginButton.setOnAction(e -> {
             ArrayList<String> opt = new ArrayList<>();
+            if(typechoice.getValue() == null) {
+                showAlertType();
+                return;
+            }
             opt.add(typechoice.getValue());
             opt.add(fieldFic.getText());
             opt.add(colorChoice.getValue());
@@ -228,14 +224,14 @@ public class ViewFX {
                     opt.add(fieldPas.getText());
                     opt.add(fieldFonc.getText());
                     opt.add(fieldIter.getText());
-                    control.fractalLaunch(opt);
                 }
                 case "Sierpinski" -> {
                     opt.add(fieldOrdre.getText());
-                    control.fractalLaunch(opt);
                 }
             }
             showAlertOpt(control.fractalLaunch(opt));
+            previewImage.getChildren().clear();
+            mainStage.setAlwaysOnTop(true);
         });
 
 
@@ -290,10 +286,68 @@ public class ViewFX {
         previewImage.setMinSize(500,500);
         previewImage.setPrefSize(500,500);
         root.add(previewImage,0,1,1,6);
-        initPane = root;
+        Scene scene = new Scene(root,1000,600);
+        mainStage.setScene(scene);
+        mainStage.setAlwaysOnTop(false);
+        mainStage.show();
     }
 
-    public void showFractalS(Fractal fractal, Stage stage){
+
+    public GridPane createControlPanel(){
+        GridPane main = new GridPane();
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> {
+            showSetMenu();
+        });
+
+        Button saveButton = new Button("Save this fractal");
+
+        Button zoomIn,zoomOut;
+        zoomIn = new Button("+");
+        zoomIn.setOnAction(e -> control.requestZoomIn());
+        zoomOut = new Button("-");
+        zoomOut.setMinSize(zoomIn.getWidth(), zoomIn.getHeight());
+        zoomOut.setOnAction(e -> control.requestZoomOut());
+
+        HBox zoomButt = new HBox();
+        zoomButt.setSpacing(3);
+        zoomButt.getChildren().addAll(zoomIn,zoomOut);
+
+        GridPane.setHalignment(zoomButt,HPos.CENTER);
+        GridPane.setHalignment(saveButton,HPos.CENTER);
+        GridPane.setHalignment(backButton,HPos.CENTER);
+        main.add(zoomButt,0,0,2,1);
+        main.add(saveButton,0,1,2,1);
+        main.add(backButton,0,2,2,1);
+        return main;
+    }
+
+    public WritableImage resizeIfNecessary(int width, int height, WritableImage image){
+        WritableImage newImg = image;
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double screenWidth = screenSize.getWidth();
+        double screenHeight = screenSize.getHeight() - 50;
+        double ratioW = screenWidth / width;
+        double ratioH = screenHeight / height;
+        if (ratioW < 1 || ratioH < 1){
+            if(ratioW < ratioH){
+                BufferedImage buffImage = SwingFXUtils.fromFXImage(newImg,null);
+                java.awt.Image resultingImage = buffImage.getScaledInstance((int)screenWidth, (int)(ratioW * height), java.awt.Image.SCALE_SMOOTH);
+                BufferedImage outputImage = new BufferedImage((int)screenWidth, (int)(ratioW * height), BufferedImage.TYPE_INT_RGB);
+                outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+                newImg = SwingFXUtils.toFXImage(outputImage,null);
+            }else{
+                BufferedImage buffImage = SwingFXUtils.fromFXImage(newImg,null);
+                java.awt.Image resultingImage = buffImage.getScaledInstance((int)(ratioH * width), (int)screenHeight, java.awt.Image.SCALE_SMOOTH);
+                BufferedImage outputImage = new BufferedImage((int)(ratioH * width), (int)screenHeight, BufferedImage.TYPE_INT_RGB);
+                outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+                newImg = SwingFXUtils.toFXImage(outputImage,null);
+            }
+        }
+        return newImg;
+    }
+
+    public void showFractalS(Fractal fractal){
         double[][] tab_ind = fractal.getTableau();
         int tabLength = ((Sierpinski)fractal).getTab().length;
 
@@ -310,38 +364,71 @@ public class ViewFX {
             }
         }
 
+        image = resizeIfNecessary(tabLength,tabLength, image);
         view.setImage(image);
-        Pane pane = new Pane();
-        pane.getChildren().add(view);
-        stage.setScene(new Scene(pane, tab_ind[0].length, tab_ind.length));
-        stage.show();
+        HBox pane = new HBox();
+        pane.getChildren().addAll(view,createControlPanel());
+        Scene scene = new Scene(pane, Math.min(tab_ind.length, image.getWidth()) + 100, Math.min(tab_ind[0].length, image.getHeight()));
+        scene.setOnKeyPressed(keyEvent -> {
+            switch (keyEvent.getCode()){
+                case Z -> {
+                    control.requestMove("UP");
+                    System.out.println("WE HERE");
+                }
+                case S -> {
+                    control.requestMove("DOWN");
+                    System.out.println("WE HERE");
+                }
+                case Q -> {
+                    control.requestMove("LEFT");
+                    System.out.println("WE HERE");
+                }
+                case D -> {
+                    control.requestMove("RIGHT");
+                    System.out.println("WE HERE");
+                }
+            }
+        });
+        mainStage.setScene(scene);
+        mainStage.show();
     }
 
 
-    public void showFractalJM(Fractal fractal,Stage stage){
+    public void showFractalJM(Fractal fractal){
         double[][] tab_index = fractal.getTableau();
         WritableImage image = new WritableImage(tab_index[0].length, tab_index.length);
         ImageView view = new ImageView();
 
-        for (int i = 0;i< tab_index.length;i++){
-            for (int j = 0; j< tab_index[0].length;j++){
-                int c = fractal.coloration((int)tab_index[i][j]);
-                image.getPixelWriter().setArgb(i,j,c);
+        for (int i = 0;i< tab_index.length;i++) {
+            for (int j = 0; j < tab_index[0].length; j++) {
+                int c = fractal.coloration((int) tab_index[i][j]);
+                image.getPixelWriter().setArgb(j, i, c);
             }
         }
-
+        image = resizeIfNecessary(tab_index[0].length, tab_index.length, image);
         view.setImage(image);
-        Pane pane = new Pane();
-        pane.getChildren().add(view);
-        stage.setScene(new Scene(pane, tab_index[0].length, tab_index.length));
-        stage.show();
+        HBox pane = new HBox();
+        pane.getChildren().addAll(view,createControlPanel());
+        Scene scene = new Scene(pane, Math.min(tab_index.length, image.getWidth()) + 100, Math.min(tab_index[0].length, image.getHeight()));
+        scene.setOnKeyPressed(keyEvent -> {
+            switch (keyEvent.getCode()){
+                case Z -> control.requestMove("UP");
+
+                case S -> control.requestMove("DOWN");
+
+                case Q -> control.requestMove("LEFT");
+
+                case D -> control.requestMove("RIGHT");
+            }
+        });
+        mainStage.setScene(scene);
+        mainStage.show();
     }
 
     public void showAlertOpt(ArrayList<String> errOpt){
         if (errOpt.isEmpty()){
             return;
         }
-
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Champs non valides");
         alert.setHeaderText("Les champs suivants sont invalides :");
@@ -357,12 +444,14 @@ public class ViewFX {
                 case "rp" -> alert.setContentText(alert.getContentText() + "Pas et Rectangle incompatibles\n");
             }
         });
-
         alert.showAndWait();
     }
 
-    public ControllerG getControl() {
-        return control;
+    public void showAlertType(){
+        Alert typeAlert = new Alert(Alert.AlertType.ERROR);
+        typeAlert.setTitle("Fractal type is null");
+        typeAlert.setHeaderText("Choose a fractal type!");
+        typeAlert.showAndWait();
     }
 
     public Stage getMainStage() {
@@ -373,10 +462,6 @@ public class ViewFX {
         this.mainStage = mainStage;
     }
 
-    public void setControl(ControllerG control) {
-        System.out.println("HERE");
-        this.control = control;
-    }
 }
 
 

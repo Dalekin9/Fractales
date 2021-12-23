@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 public class ControllerG {
     private ViewFX view;
-    private Fractal fractale ;
+    private ArrayList<String> fractaleOpt;
 
     public ControllerG(){}
 
@@ -184,6 +184,7 @@ public class ControllerG {
     public ArrayList<String> fractalLaunch(ArrayList<String> opt){
         BuilderFractal fract = new BuilderFractal();
         ArrayList<String> err = new ArrayList<>();
+        Fractal fractale;
         switch (opt.get(0)){
             case "Julia","Mandelbrot" -> {
                 if(opt.get(0).equals("Julia")) {
@@ -231,8 +232,9 @@ public class ControllerG {
                     fract = fract.iter(ite);
                 }
                 if(err.isEmpty()) {
+                    fractaleOpt = opt;
                     fractale = fract.build();
-                    view.showFractalJM(fractale, view.getMainStage());
+                    view.showFractalJM(fractale);
                 }
             }
             case "Sierpinski" -> {
@@ -243,14 +245,116 @@ public class ControllerG {
                 }else{
                     fract = fract.ordre(order);
                 }
+
                 if(err.isEmpty()) {
+                    fractaleOpt = opt;
                     fractale = fract.build();
-                    view.showFractalS(fractale, view.getMainStage());
+                    view.showFractalS(fractale);
                 }
             }
         }
 
         return err;
+    }
+
+    public String rectArrayToString(double[] rect){
+        StringBuilder rectangle = new StringBuilder();
+        for (int i = 0; i<3; i++){
+            rectangle.append(rect[i]).append(";");
+        }
+        rectangle.append(rect[3]);
+        return rectangle.toString();
+    }
+
+    public void requestZoomIn(){
+        BuilderFractal zoomFract;
+        ArrayList<String> opt = fractaleOpt;
+        if (opt.get(0).equals("Julia") || opt.get(0).equals("Mandelbrot")){
+            zoomFract = sameFract(opt);
+
+            double[] rect = validRect(opt.get(4));
+            double diffW10Perc = (rect[1] - rect[0]) * 0.1;
+            double diffH10Perc = (rect[3] - rect[2]) * 0.1;
+            rect[0] = rect[0] + diffW10Perc;
+            rect[1] = rect[1] - diffW10Perc;
+            rect[2] = rect[2] + diffH10Perc;
+            rect[3] = rect[3] - diffH10Perc;
+            String rectangle = rectArrayToString(rect);
+            fractaleOpt.set(4,rectangle);
+            double pas = 0.8 * validPas(opt.get(5));
+            fractaleOpt.set(5, Double.toString(pas));
+            zoomFract = zoomFract.rect(rect).pas(pas);
+            view.showFractalJM(zoomFract.build());
+        }
+    }
+
+    public BuilderFractal sameFract(ArrayList<String> opt){
+        BuilderFractal fract = new BuilderFractal();
+        fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
+        double[] cst = validCst(opt.get(3));
+        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(correctFormatFct(opt.get(6))).build();
+         fract = fract.fonction(fonc);
+         return fract;
+    }
+
+    public void requestZoomOut(){
+        BuilderFractal zoomFract;
+        ArrayList<String> opt = fractaleOpt;
+        if (opt.get(0).equals("Julia") || opt.get(0).equals("Mandelbrot")){
+            zoomFract = sameFract(opt);
+            double[] rect = validRect(opt.get(4));
+            double diffW10Perc = (rect[1] - rect[0]) * 0.1;
+            double diffH10Perc = (rect[3] - rect[2]) * 0.1;
+            rect[0] = rect[0] - diffW10Perc;
+            rect[1] = rect[1] + diffW10Perc;
+            rect[2] = rect[2] - diffH10Perc;
+            rect[3] = rect[3] + diffH10Perc;
+            String rectangle = rectArrayToString(rect);
+            fractaleOpt.set(4,rectangle);
+            double pas = 1.2 * validPas(opt.get(5));
+            fractaleOpt.set(5, Double.toString(pas));
+            zoomFract = zoomFract.rect(rect).pas(pas);
+            view.showFractalJM(zoomFract.build());
+        }
+    }
+
+    public void requestMove(String direction){
+        BuilderFractal zoomFract;
+        ArrayList<String> opt = fractaleOpt;
+        if (opt.get(0).equals("Julia") || opt.get(0).equals("Mandelbrot")){
+            zoomFract = sameFract(opt);
+            fractaleOpt.set(5, Double.toString(validPas(opt.get(5))));
+
+            double[] rect = validRect(opt.get(4));
+            switch (direction){
+                case "UP" -> {
+                    double diffH10Perc = (rect[3] - rect[2]) * 0.1;
+                    rect[2] = rect[2] - diffH10Perc;
+                    rect[3] = rect[3] - diffH10Perc;
+                }
+                case "DOWN" -> {
+                    double diffH10Perc = (rect[3] - rect[2]) * 0.1;
+                    rect[2] = rect[2] + diffH10Perc;
+                    rect[3] = rect[3] + diffH10Perc;
+                }
+                case "LEFT" -> {
+                    double diffH10Perc = (rect[1] - rect[0]) * 0.1;
+                    rect[0] = rect[0] - diffH10Perc;
+                    rect[1] = rect[1] - diffH10Perc;
+                }
+                case "RIGHT" -> {
+                    double diffH10Perc = (rect[1] - rect[0]) * 0.1;
+                    rect[0] = rect[0] + diffH10Perc;
+                    rect[1] = rect[1] + diffH10Perc;
+                }
+
+            }
+            String rectangle = rectArrayToString(rect);
+            fractaleOpt.set(4,rectangle);
+
+            zoomFract = zoomFract.rect(rect).pas(validPas(opt.get(5)));
+            view.showFractalJM(zoomFract.build());
+        }
     }
 
     public void setView(ViewFX view) {
