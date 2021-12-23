@@ -106,7 +106,7 @@ public class Sierpinski extends Fractal{
     }
 
     @Override
-    public int coloration(int val) {
+    public int coloration(double val) {
         switch (this.color) {
             case 0 -> {
                 return Color.WHITE.getRGB();

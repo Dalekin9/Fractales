@@ -13,16 +13,41 @@ public abstract class Fractal {
      * ***************************************************** *
      */
 
+    /**
+     * @return le tableau de données de la fractale
+     */
     public abstract double[][] getTableau();
 
+    /**
+     * @return le nom du fichier voulu pour la fractale
+     */
     public abstract String getFichier();
 
-    public abstract int coloration(int val);
+    /**
+     * Determine la coloration de notre point
+     * @param val : valeur d'une case de notre tableau de données
+     * @return la couleur de point dans notre fractale en fonction de la coloration
+     */
+    public abstract int coloration(double val);
 
-    public abstract double[][] createRect();
+    /**
+     * Initialise et complète le tableau de données
+     * @return le tableau de données complété
+     */
+    public abstract double[][] createRect() ;
 
-    public abstract BufferedImage createImg(double[][] tab_ind);
+    /**
+     * Creer l'image de notre fractale
+     * @param data : notre tableau de données
+     * @return l'image de la fractale en fonction du tableau de données
+     */
+    public abstract BufferedImage createImg(double[][] data);
 
+    /**
+     * Ecrit un fichier descriptif de la fractale
+     * @throws IOException
+     * pas de retour
+     */
     public abstract void writeFileTxt() throws IOException;
 
     /*
@@ -31,6 +56,11 @@ public abstract class Fractal {
      * ***************************************************** *
      */
 
+    /**
+     * Fonction pour Julia et Mandelbrot pour reduire un double un fonction du pas
+     * @param pas : le pas de la fractale
+     * @return une puissance de 10 en fonction du nombre de chiffres apres la virgule du pas
+     */
     public double chercheMult(double pas){
         String val = String.valueOf(pas);
         System.out.println(val.length());
@@ -63,6 +93,11 @@ public abstract class Fractal {
         }
     }
 
+    /**
+     * Creer une fractale
+     * @throws IOException
+     * pas de retour
+     */
     public void launchFractale() throws IOException {
         BufferedImage img = createImg(this.getTableau());
 
