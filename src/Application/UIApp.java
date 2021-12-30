@@ -19,7 +19,7 @@ public class UIApp extends Application {
         view.setMainStage(stage);
         control.setView(view);
 
-        view.showSetMenu();
+        view.mainMenu();
     }
 
     public void launchGraph(){

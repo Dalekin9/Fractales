@@ -101,6 +101,28 @@ public class Launcher {
         return c;
     }
 
+    public static boolean containsC(String last){
+        if(last.equals("c")){
+            return true;
+        }else{
+            for (int i = 0; i < last.length(); i++){
+                if(last.charAt(i) == 'c'){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static int closingParenthePos(String mon){
+        for (int i = 0; i < mon.length(); i++){
+            if(mon.charAt(i) == ')'){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Verifie le format d'entree de la fonction
      * @param fonction : la fonction voulue
@@ -108,28 +130,61 @@ public class Launcher {
      */
     public static LinkedList<double[]> correctFormatFct(String fonction){
         String[] aftPlus = fonction.split("\\+");
-        if (! aftPlus[aftPlus.length-1].equals("c")){
+        if (! containsC(aftPlus[aftPlus.length - 1])){
             errorParsing();
         }
         LinkedList<double[]> liste = new LinkedList<>();
         for (int i = 0;i<aftPlus.length;i++){
-            double[] data = new double[2];
-            if (aftPlus[i].equals("c")) {
-                if (i != aftPlus.length - 1) {
+            String current = aftPlus[i];
+            double[] data = new double[3];
+            if (containsC(current)) {
+                if (i != aftPlus.length - 1 || !(current.startsWith("cos(") || current.startsWith("sin(") || current.equals("c"))) {
                     errorParsing();
                 } else {
-                    return liste;
+                    if(current.startsWith("cos(")) {
+                        liste.add(new double[]{1,0,1});
+                    }else if(current.startsWith("sin(")){
+                        liste.add(new double[]{1,0,2});
+                    }
+                    if(current.equals("c") || current.charAt(4) == 'c') {
+                        return liste;
+                    }
                 }
-            } else if (aftPlus[i].charAt(0) == 'x'){
-                if (nbX(aftPlus[i]) != 1){
+            } else if (current.charAt(0) == 'x') {
+                if (nbX(current) != 1) {
                     errorParsing();
                 } else {
                     data[0] = 1;
-                    if (aftPlus[i].length() == 1) {
+                    if (current.length() == 1) {
                         data[1] = 1;
                         liste.add(i, data);
                     } else {
-                        String[] res = aftPlus[i].split("x");
+                        String[] res = current.split("x");
+                        try {
+                            data[1] = Double.parseDouble(res[1]);
+                            liste.add(i, data);
+                        } catch (Exception e) {
+                            errorParsing();
+                        }
+                    }
+                }
+            }else if(current.startsWith("cos(") || current.startsWith("sin(")){
+                String content = current.substring(4, closingParenthePos(current));
+                if (nbX(current) != 1) {
+                    errorParsing();
+                } else {
+                    data[0] = 1;
+                    data[2] = 0;
+                    if(current.startsWith("cos(")){
+                        data[2] = 1;
+                    }else if(current.startsWith("sin(")){
+                        data[2] = 2;
+                    }
+                    if (content.charAt(0) == 'x') {
+                        data[1] = 1;
+                        liste.add(i, data);
+                    } else {
+                        String[] res = current.split("x");
                         try {
                             data[1] = Double.parseDouble(res[1]);
                             liste.add(i, data);
@@ -139,10 +194,10 @@ public class Launcher {
                     }
                 }
             } else {
-                if (nbX(aftPlus[i]) != 1){
+                if (nbX(current) != 1){
                     errorParsing();
                 } else {
-                    String[] res = aftPlus[i].split("x");
+                    String[] res = current.split("x");
                     try {
                         data[0] = Double.parseDouble(res[0]);
                         if (res.length == 1) {

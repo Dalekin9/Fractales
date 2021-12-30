@@ -64,12 +64,28 @@ public class Fonction implements Function<Complex,Complex>  {
 
     @Override
     public Complex apply(Complex complex) {
-        Complex res = this.c;
+        Complex res = new Complex.Builder(0,0).build();
         for (double[] doubles : coeff) {
-            Complex a = complex.puissance(complex, doubles[1]);
-            Complex b = new Complex.Builder(doubles[0], 0).build();
-            Complex c = a.mul(b);
-            res = res.add(c);
+            if (doubles[0] == 1 && doubles[1] == 0 ) {
+                if(doubles[2] == 1){
+                    res = res.add(this.c.cos());
+                }else if(doubles[2] == 2){
+                    res = res.add(this.c.sin());
+                }else{
+                    res = res.add(this.c);
+                }
+            }else {
+                Complex a = Complex.puissance(complex, doubles[1]);
+                Complex b = new Complex.Builder(doubles[0], 0).build();
+                Complex c = a.mul(b);
+                if(doubles[2] == 1){
+                    res = res.add(c.cos());
+                }else if(doubles[2] == 2){
+                    res = res.add(c.sin());
+                }else{
+                    res = res.add(c);
+                }
+            }
         }
         return res;
     }

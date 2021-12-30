@@ -70,15 +70,4 @@ public abstract class Fractal {
         writeFileTxt();
     }
 
-    public double getPas() {
-        return pas;
-    }
-
-    public double[][] getRect() {
-        return rect;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
 }

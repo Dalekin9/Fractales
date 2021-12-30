@@ -72,7 +72,7 @@ public class Complex {
      * @param puissance : puissance voulue
      * @return le complexe c passé a la puissance voulue
      */
-    public Complex puissance(Complex c, double puissance){
+    public static Complex puissance(Complex c, double puissance){
         if (puissance == 1 ){
             return c;
         } else {
@@ -82,6 +82,14 @@ public class Complex {
             }
             return res;
         }
+    }
+
+    public Complex cos(){
+        return new Complex.Builder(Math.cos(p_reel) * Math.cosh(p_img), - (Math.sin(p_reel) * Math.sinh(p_img))).build();
+    }
+
+    public Complex sin(){
+        return new Complex.Builder(Math.sin(p_reel) * Math.cosh(p_img), - (Math.cos(p_reel) * Math.sinh(p_img))).build();
     }
 
 }

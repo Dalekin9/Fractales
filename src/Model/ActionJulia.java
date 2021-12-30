@@ -65,7 +65,7 @@ public class ActionJulia extends RecursiveAction {
     public int divergenceIndex (Complex z0){
         int ite = 0;
         Complex zn = z0;
-        while (ite < this.iter - 1 && zn.module() <=2){
+        while (ite < this.iter && zn.module() <=2){
             zn = f.apply(zn);
             ite++;
         }

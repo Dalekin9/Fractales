@@ -1,7 +1,13 @@
 package Controller;
 import Model.*;
 import View.ViewFX;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.ImageView;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -24,6 +30,18 @@ public class ControllerG {
             }
             case "Multicolore" -> {
                 return 4;
+            }
+            case "Rose-Orange" -> {
+                return 5;
+            }
+            case "Orange-Rose" -> {
+                return 6;
+            }
+            case "Vert-Bleu" -> {
+                return 7;
+            }
+            case "Vert-Rose" -> {
+                return 8;
             }
             default -> {
                 return 0;
@@ -73,30 +91,85 @@ public class ControllerG {
         return c;
     }
 
-    public static LinkedList<double[]> correctFormatFct(String fonction){
+    public static boolean containsC(String last){
+        if(last.equals("c")){
+            return true;
+        }else{
+            for (int i = 0; i < last.length(); i++){
+                if(last.charAt(i) == 'c'){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static int closingParenthePos(String mon){
+        for (int i = 0; i < mon.length(); i++){
+            if(mon.charAt(i) == ')'){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static LinkedList<double[]> validFct(String fonction){
         String[] aftPlus = fonction.split("\\+");
-        if (! aftPlus[aftPlus.length-1].equals("c")){
+        if (! containsC(aftPlus[aftPlus.length - 1])){
             return null;
         }
         LinkedList<double[]> liste = new LinkedList<>();
         for (int i = 0;i<aftPlus.length;i++){
-            double[] data = new double[2];
-            if (aftPlus[i].equals("c")) {
-                if (i != aftPlus.length - 1) {
+            String current = aftPlus[i];
+            double[] data = new double[3];
+            if (containsC(current)) {
+                if (i != aftPlus.length - 1 || !(current.startsWith("cos(") || current.startsWith("sin(") || current.equals("c"))) {
                     return null;
                 } else {
-                    return liste;
+                    if(current.startsWith("cos(")) {
+                        liste.add(new double[]{1,0,1});
+                    }else if(current.startsWith("sin(")){
+                        liste.add(new double[]{1,0,2});
+                    }
+                    if(current.equals("c") || current.charAt(4) == 'c') {
+                        return liste;
+                    }
                 }
-            } else if (aftPlus[i].charAt(0) == 'x'){
-                if (nbX(aftPlus[i]) != 1){
+            } else if (current.charAt(0) == 'x') {
+                if (nbX(current) != 1) {
                     return null;
                 } else {
                     data[0] = 1;
-                    if (aftPlus[i].length() == 1) {
+                    if (current.length() == 1) {
                         data[1] = 1;
                         liste.add(i, data);
                     } else {
-                        String[] res = aftPlus[i].split("x");
+                        String[] res = current.split("x");
+                        try {
+                            data[1] = Double.parseDouble(res[1]);
+                            liste.add(i, data);
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    }
+                }
+            }else if(current.startsWith("cos(") || current.startsWith("sin(")){
+                String content = current.substring(4, closingParenthePos(current));
+                if (nbX(current) != 1) {
+                    return null;
+                } else {
+                    data[0] = 1;
+                    data[2] = 0;
+                    if(current.startsWith("cos(")){
+                        data[2] = 1;
+                    }else if(current.startsWith("sin(")){
+                        data[2] = 2;
+                    }
+                    if (content.charAt(0) == 'x') {
+                        data[1] = 1;
+                        liste.add(i, data);
+                    } else {
+                        String[] res = current.split("x");
                         try {
                             data[1] = Double.parseDouble(res[1]);
                             liste.add(i, data);
@@ -106,10 +179,10 @@ public class ControllerG {
                     }
                 }
             } else {
-                if (nbX(aftPlus[i]) != 1){
+                if (nbX(current) != 1){
                     return null;
                 } else {
-                    String[] res = aftPlus[i].split("x");
+                    String[] res = current.split("x");
                     try {
                         data[0] = Double.parseDouble(res[0]);
                         if (res.length == 1) {
@@ -216,7 +289,7 @@ public class ControllerG {
                     err.add("fo");
                 }else{
                     Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
-                    LinkedList<double[]> fo = correctFormatFct(opt.get(6));
+                    LinkedList<double[]> fo = validFct(opt.get(6));
                     if (fo == null){
                         err.add("fo");
                     }else{
@@ -292,7 +365,7 @@ public class ControllerG {
         BuilderFractal fract = new BuilderFractal();
         fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
         double[] cst = validCst(opt.get(3));
-        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(correctFormatFct(opt.get(6))).build();
+        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
          fract = fract.fonction(fonc);
          return fract;
     }
@@ -354,6 +427,16 @@ public class ControllerG {
 
             zoomFract = zoomFract.rect(rect).pas(validPas(opt.get(5)));
             view.showFractalJM(zoomFract.build());
+        }
+    }
+
+    public void saveImg(){
+        File outputFile = new File(fileName(fractaleOpt.get(1)) + ".png");
+        BufferedImage bImage = SwingFXUtils.fromFXImage(view.getFractImg().getImage(), null);
+        try {
+            ImageIO.write(bImage, "png", outputFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

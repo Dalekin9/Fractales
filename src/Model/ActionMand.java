@@ -66,7 +66,7 @@ public class ActionMand extends RecursiveAction {
         int ite = 0;
         Complex zn = z0;
         Fonction fonction = new Fonction.BuilderFonction(z0).coef(f.getCoeff()).build();
-        while (ite < this.iter - 1 && zn.module() <=2){
+        while (ite < this.iter && zn.module() <=2){
             zn = fonction.apply(zn);
             ite++;
         }
