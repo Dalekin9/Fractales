@@ -30,6 +30,13 @@ public class Complex {
         return p_reel + " + i"+ p_img;
     }
 
+    public double getP_reel() {
+        return p_reel;
+    }
+
+    public double getP_img() {
+        return p_img;
+    }
 
     /*
      * ***************************************************** *
@@ -56,6 +63,22 @@ public class Complex {
         double pi = ((this.p_reel + this.p_img)*(b.p_reel + b.p_img)) -
                 (this.p_reel*b.p_reel) - (this.p_img * b.p_img);
         return new Complex( new Builder( pr, pi ));
+    }
+
+    /**
+     * Divise deux complexes
+     * @param b : le complexe au denominateur
+     * @return la division de notre complexe par b
+     */
+    public Complex div(Complex b){
+        if (b.p_img == 0){
+            return new Complex(new Builder( this.p_reel / b.p_reel, this.p_img / b.p_reel ));
+        } else {
+            Complex c = new Complex.Builder(b.p_reel, -b.p_img).build();
+            Complex num = this.mul(c);
+            Complex den = new Complex.Builder(b.p_reel*b.p_reel + b.p_img*b.p_img,0).build();
+            return new Complex(new Builder(num.p_reel / den.p_reel, num.p_img/den.p_reel));
+        }
     }
 
     /**

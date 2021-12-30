@@ -101,17 +101,36 @@ public class Launcher {
         return c;
     }
 
-    public static boolean containsC(String last){
-        if(last.equals("c")){
-            return true;
-        }else{
-            for (int i = 0; i < last.length(); i++){
-                if(last.charAt(i) == 'c'){
-                    return true;
+    public static boolean containsC(String[] last){
+        for (int i = 0; i < last.length; i++){
+            for (int j = 0; j < last[i].length(); j++){
+                if(last[i].charAt(j) == 'c'){
+                    if (j == last[i].length()-1) {
+                        return true;
+                    } else {
+                        if (last[i].charAt(j+1) != 'o'){
+                            return true;
+                        }
+                    }
                 }
             }
-            return false;
         }
+        return false;
+    }
+
+    public static boolean containsC(String last){
+        for (int j = 0; j < last.length(); j++){
+            if(last.charAt(j) == 'c'){
+                if (j == last.length() - 1) {
+                    return true;
+                }else {
+                    if (last.charAt(j+1) != 'o'){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static int closingParenthePos(String mon){
@@ -129,90 +148,181 @@ public class Launcher {
      * @return une liste de tableau de double correspondant aux coefficient de la fonction
      */
     public static LinkedList<double[]> correctFormatFct(String fonction){
-        String[] aftPlus = fonction.split("\\+");
-        if (! containsC(aftPlus[aftPlus.length - 1])){
-            errorParsing();
-        }
-        LinkedList<double[]> liste = new LinkedList<>();
-        for (int i = 0;i<aftPlus.length;i++){
-            String current = aftPlus[i];
-            double[] data = new double[3];
-            if (containsC(current)) {
-                if (i != aftPlus.length - 1 || !(current.startsWith("cos(") || current.startsWith("sin(") || current.equals("c"))) {
-                    errorParsing();
-                } else {
-                    if(current.startsWith("cos(")) {
-                        liste.add(new double[]{1,0,1});
-                    }else if(current.startsWith("sin(")){
-                        liste.add(new double[]{1,0,2});
+        try {
+            String[] aftPlus = fonction.split("\\+");
+            if (!containsC(aftPlus)) { //verifie que la fonction contiens une constante
+                errorParsing();
+            }
+            LinkedList<double[]> liste = new LinkedList<>();
+            for (int i = 0; i < aftPlus.length; i++) {
+                System.out.println(i);
+                String current = aftPlus[i];
+                System.out.println("current : "+current);
+                double[] data = new double[5];
+                if (containsC(current)) {
+                    System.out.println("je contiens c");
+                    if (current.equals("c")) { //c
+                        liste.add(new double[]{1, 0, 0, 0, 0});
                     }
-                    if(current.equals("c") || current.charAt(4) == 'c') {
-                        return liste;
-                    }
-                }
-            } else if (current.charAt(0) == 'x') {
-                if (nbX(current) != 1) {
-                    errorParsing();
-                } else {
-                    data[0] = 1;
-                    if (current.length() == 1) {
-                        data[1] = 1;
-                        liste.add(i, data);
-                    } else {
-                        String[] res = current.split("x");
-                        try {
-                            data[1] = Double.parseDouble(res[1]);
-                            liste.add(i, data);
-                        } catch (Exception e) {
-                            errorParsing();
+                    else if (current.startsWith("cos(")) {
+                        if (current.charAt(4) == 'c') { //cos(c)
+                            liste.add(new double[]{1, 0, 1, 0, 0});
+                        } else { //cos(../c) ou cos(x/c)
+                            String content = current.substring(4, closingParenthePos(current));
+                            String tab[] = content.split("/");
+                            if (tab.length == 2) {
+                                if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
+                                    if (tab[1].length() == 1) {
+                                        System.out.println("cos x/c");
+                                        liste.add(new double[]{1, 0, 1, 0, 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 1, 0, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            errorParsing();
+                                        }
+                                    }
+                                } else {
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 1, Double.parseDouble(tab[0]), 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 1, Double.parseDouble(tab[0]), Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            errorParsing();
+                                        }
+                                    }
+                                }
+                            }
+                            else {
+                                errorParsing();
+                            }
                         }
                     }
-                }
-            }else if(current.startsWith("cos(") || current.startsWith("sin(")){
-                String content = current.substring(4, closingParenthePos(current));
-                if (nbX(current) != 1) {
-                    errorParsing();
-                } else {
-                    data[0] = 1;
-                    data[2] = 0;
-                    if(current.startsWith("cos(")){
-                        data[2] = 1;
-                    }else if(current.startsWith("sin(")){
-                        data[2] = 2;
-                    }
-                    if (content.charAt(0) == 'x') {
-                        data[1] = 1;
-                        liste.add(i, data);
-                    } else {
-                        String[] res = current.split("x");
-                        try {
-                            data[1] = Double.parseDouble(res[1]);
-                            liste.add(i, data);
-                        } catch (Exception e) {
-                            errorParsing();
-                        }
-                    }
-                }
-            } else {
-                if (nbX(current) != 1){
-                    errorParsing();
-                } else {
-                    String[] res = current.split("x");
-                    try {
-                        data[0] = Double.parseDouble(res[0]);
-                        if (res.length == 1) {
-                            data[1] = 1;
+                    else if (current.startsWith("sin(")) {
+                        if (current.charAt(4) == 'c') { //sin(c)
+                            liste.add(new double[]{1, 0, 2, 0, 0});
                         } else {
-                            data[1] = Double.parseDouble(res[1]);
+                            String content = current.substring(4, closingParenthePos(current));
+                            String tab[] = current.split("/");
+                            if (tab.length != 2) errorParsing();
+                            else {
+                                if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 2, 0, 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 2, 0, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            errorParsing();
+                                        }
+                                    }
+                                } else {
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 2, Double.parseDouble(tab[0]), 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 2, Double.parseDouble(tab[0]), Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            errorParsing();
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        liste.add(i, data);
-                    } catch (Exception e) {
+                    }
+                    else {
+                        String content = current.substring(4, closingParenthePos(current));
+                        String tab[] = current.split("/");
+                        if (tab.length != 2) errorParsing();
+                        if (tab[1].length() == 1){
+                            liste.add(new double[]{1, 0, 3, Double.parseDouble(tab[0]), 1});
+                        }
+                        else if (tab[1].length() == 2) {
+                            liste.add(new double[]{1, 0, 3, Double.parseDouble(tab[0]), Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                        } else {
+                            errorParsing();
+                        }
+                    }
+                }
+                else if (current.charAt(0) == 'x') {
+                    System.out.println("cas ou je commence par x");
+                    if (nbX(current) != 1) {
                         errorParsing();
+                    } else {
+                        data[0] = 1;
+                        if (current.length() == 1) {
+                            data[1] = 1;
+                            liste.add(i, data);
+                        } else {
+                            String[] res = current.split("x");
+                            try {
+                                data[1] = Double.parseDouble(res[1]);
+                                liste.add(i, data);
+                            } catch (Exception e) {
+                                errorParsing();
+                            }
+                        }
+                    }
+                }
+                else if (current.startsWith("cos(") || current.startsWith("sin(")) {
+                    System.out.println("cas avec sin ou cos au debut");
+                    String content = current.substring(4, closingParenthePos(current));
+                    System.out.println("content : "+content);
+                    if (nbX(current) != 1) {
+                        errorParsing();
+                    } else {
+                        data[0] = 1;
+                        data[2] = 0;
+                        data[3] = 0;
+                        data[4] = 0;
+                        if (current.startsWith("cos(")) {
+                            data[2] = 1;
+                        } else if (current.startsWith("sin(")) {
+                            data[2] = 2;
+                        }
+                        if (content.charAt(0) == 'x') {
+                            String[] res = content.split("x");
+                            System.out.println(res.length);
+                            data[1] = 1;
+                            liste.add(i, data);
+                        } else {
+                            String[] res = content.split("x");
+                            data[0] = Double.parseDouble(res[0]);
+                            if (res.length == 1) {
+                                data[1] = 1;
+                            } else {
+                                data[1] = Double.parseDouble(res[1]);
+                            }
+                            liste.add(i, data);
+                        }
+                    }
+                }
+                else {
+                    System.out.println("else");
+                    if (nbX(current) != 1) {
+                        errorParsing();
+                    } else {
+                        String[] res = current.split("x");
+                        try {
+                            data[0] = Double.parseDouble(res[0]);
+                            if (res.length == 1) {
+                                data[1] = 1;
+                            } else {
+                                data[1] = Double.parseDouble(res[1]);
+                            }
+                            liste.add(i, data);
+                        } catch (Exception e) {
+                            errorParsing();
+                        }
                     }
                 }
             }
+            return liste;
+        }catch(NumberFormatException e) {
+            System.out.println("It is not numerical string");
+            errorParsing();
         }
-        errorParsing();
         return null;
     }
 
@@ -344,17 +454,16 @@ public class Launcher {
                                 fonction = fonction.coef(fo);
                             }
                             fractale = fractale.fonction(fonction.build());
+                            System.out.println("fin de fonction");
 
                             if (cmd.hasOption("col")){
                                 int color = correctFormatColor(cmd.getOptionValue("col"));
                                 fractale = fractale.coloration(color);
                             }
-
                             if (cmd.hasOption("it")){
                                 int ite = correctFormatIte(cmd.getOptionValue("it"));
                                 fractale = fractale.iter(ite);
                             }
-
                             Fractal fractal = fractale.build();
                             fractal.launchFractale();
 
