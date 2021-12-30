@@ -88,9 +88,9 @@ public class Mandelbrot extends Fractal{
                 return new Color(r,g,b).getRGB();
             }
             case 1 -> {
-                //40 = 0.11
-                //330 = 0.916
-                float res = (float) (0.916 + (0.194 * (val / this.iter)));
+                //20 = 0.055
+                //345 = 0.9583
+                float res = (float) (0.9583 + (0.0967 * (val / this.iter)));
                 return Color.HSBtoRGB(res % 1 , (float)val/iter, (float)val/iter);
 
             }
@@ -108,7 +108,7 @@ public class Mandelbrot extends Fractal{
             }
             case 4 -> {
                 float res = (float) (val / this.iter);
-                return Color.HSBtoRGB( res, (float)val/iter, (float)val/iter);
+                return Color.HSBtoRGB(res, (float) (0.7 + 0.3*val/iter), (float) (0.8 +  0.2*val/iter));
             }
             case 5 -> { //rose-orange FF00FF
                 //y = ax + b
@@ -132,6 +132,10 @@ public class Mandelbrot extends Fractal{
                 double a = (Color.decode("#EB83F4").getRGB() - Color.decode("#87F075").getRGB()) / (double)iter;
                 double b = Color.decode("#87F075").getRGB();
                 return (int) ( (a * val) + b);
+            }
+            case 9 -> {
+                float res = (float) (val / this.iter);
+                return Color.HSBtoRGB(res, (float)val/iter, (float)val/iter); //nous
             }
             default -> {
                 return Color.BLACK.getRGB();

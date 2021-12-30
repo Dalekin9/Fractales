@@ -102,13 +102,13 @@ public class Launcher {
     }
 
     public static boolean containsC(String[] last){
-        for (int i = 0; i < last.length; i++){
-            for (int j = 0; j < last[i].length(); j++){
-                if(last[i].charAt(j) == 'c'){
-                    if (j == last[i].length()-1) {
+        for (String s : last) {
+            for (int j = 0; j < s.length(); j++) {
+                if (s.charAt(j) == 'c') {
+                    if (j == s.length() - 1) {
                         return true;
                     } else {
-                        if (last[i].charAt(j+1) != 'o'){
+                        if (s.charAt(j + 1) != 'o') {
                             return true;
                         }
                     }
@@ -169,7 +169,7 @@ public class Launcher {
                             liste.add(new double[]{1, 0, 1, 0, 0});
                         } else { //cos(../c) ou cos(x/c)
                             String content = current.substring(4, closingParenthePos(current));
-                            String tab[] = content.split("/");
+                            String[] tab = content.split("/");
                             if (tab.length == 2) {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
                                     if (tab[1].length() == 1) {
@@ -204,7 +204,7 @@ public class Launcher {
                             liste.add(new double[]{1, 0, 2, 0, 0});
                         } else {
                             String content = current.substring(4, closingParenthePos(current));
-                            String tab[] = current.split("/");
+                            String[] tab = content.split("/");
                             if (tab.length != 2) errorParsing();
                             else {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
@@ -233,7 +233,7 @@ public class Launcher {
                     }
                     else {
                         String content = current.substring(4, closingParenthePos(current));
-                        String tab[] = current.split("/");
+                        String[] tab = content.split("/");
                         if (tab.length != 2) errorParsing();
                         if (tab[1].length() == 1){
                             liste.add(new double[]{1, 0, 3, Double.parseDouble(tab[0]), 1});
@@ -333,7 +333,7 @@ public class Launcher {
      */
     public static int correctFormatColor(String c){
         if (c.equals("0") || c.equals("1") || c.equals("2") || c.equals("3") || c.equals("4") ||
-                c.equals("5") || c.equals("6") ||  c.equals("7") || c.equals("8")){
+                c.equals("5") || c.equals("6") ||  c.equals("7") || c.equals("8") || c.equals("9")){
             return Integer.parseInt(c);
         } else {
             errorParsing();
