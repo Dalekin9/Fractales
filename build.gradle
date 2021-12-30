@@ -31,7 +31,6 @@ dependencies {
     implementation files('lib/javafx.base.jar')
     implementation files('lib/javafx.fxml.jar')
     implementation files('lib/javafx.controls.jar')
-    implementation files('lib/javafx.base.jar')
     implementation files('lib/javafx.controls.jar')
     implementation files('lib/javafx.fxml.jar')
     implementation files('lib/javafx.swing.jar')
