@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -228,7 +229,6 @@ public class ViewFX {
 
             }
             showAlertOpt(control.fractalLaunch(opt));
-            previewImage.getChildren().clear();
         });
 
         Button backButton = new Button("Retour");
@@ -297,6 +297,8 @@ public class ViewFX {
 
 
     public VBox createControlPanel(){
+        previewImage.getChildren().clear();
+
         VBox main = new VBox();
         Button backButton = new Button("Retour");
         backButton.setOnAction(e -> showSetMenu());
@@ -366,7 +368,6 @@ public class ViewFX {
                 }
             }
         }
-
         image = resizeIfNecessary(tabLength,tabLength, image);
         fractImg.setImage(image);
         HBox pane = new HBox();
@@ -388,7 +389,6 @@ public class ViewFX {
     public void showFractalJM(Fractal fractal){
         double[][] tab_index = fractal.getTableau();
         WritableImage image = new WritableImage(tab_index[0].length, tab_index.length);
-
         for (int i = 0;i< tab_index.length;i++) {
             for (int j = 0; j < tab_index[0].length; j++) {
                 int c = fractal.coloration((int) tab_index[i][j]);
@@ -411,8 +411,8 @@ public class ViewFX {
                 case MINUS -> control.requestZoomOut();
             }
         });
-        mainStage.setAlwaysOnTop(true);
         mainStage.setScene(scene);
+        mainStage.setAlwaysOnTop(true);
         mainStage.show();
     }
 
@@ -484,6 +484,15 @@ public class ViewFX {
         mainStage.show();
     }
 
+    public void galleryScreen(){
+        VBox root = new VBox();
+        ScrollPane gallery = new ScrollPane();
+        
+
+        Button backButton = new Button("Retour");
+        backButton.setOnAction(e -> mainMenu());
+    }
+
     public void presentationScreen(){
         GridPane grid = new GridPane();
 
@@ -491,7 +500,6 @@ public class ViewFX {
         juliaBox.setAlignment(Pos.TOP_CENTER);
         ImageView juliaImg = new ImageView(new Image(new File("JuliaExemp.png").toURI().toString()));
         Text juliaText = new Text("""
-                Les fractales de l'ensemble Julia sont 
                 """);
         juliaBox.getChildren().addAll(juliaImg,juliaText);
 

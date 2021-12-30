@@ -454,7 +454,6 @@ public class Launcher {
                                 fonction = fonction.coef(fo);
                             }
                             fractale = fractale.fonction(fonction.build());
-                            System.out.println("fin de fonction");
 
                             if (cmd.hasOption("col")){
                                 int color = correctFormatColor(cmd.getOptionValue("col"));

@@ -14,26 +14,22 @@ public class CommandApache {
         options.addOption(Option.builder("G")
                 .longOpt("graph")
                 .hasArg(false)
-                .argName("graphique")
-                .desc("Mode Graphique")
-                .required(false)
+                .desc("Mode Graphique\n")
                 .build());
 
         //Console
         options.addOption(Option.builder("C")
                 .longOpt("cons")
                 .hasArg(false)
-                .required(false)
-                .desc("Mode Console")
-                .argName("console")
+                .desc("Mode Console\n")
                 .build());
 
         //rectangle
         options.addOption(Option.builder("r")
                 .longOpt("rect")
                 .hasArg(true)
-                .desc("Borne du rectangle,"+
-                        "\nforme x1;x2;y1;y2")
+                .desc("Borne du rectangle, " +
+                        "\nforme x1;x2;y1;y2\n")
                 .argName("rectangle")
                 .required(false)
                 .build());
@@ -42,7 +38,7 @@ public class CommandApache {
         options.addOption(Option.builder("p")
                 .longOpt("pas")
                 .hasArg(true)
-                .desc("Pas de discretisation")
+                .desc("Pas de discretisation\n")
                 .argName("pas")
                 .required(false)
                 .build());
@@ -51,10 +47,9 @@ public class CommandApache {
         options.addOption(Option.builder("cst")
                 .longOpt("const")
                 .hasArg(true)
-                .desc("""
-                        Constante de la fonction\s
-                        forme -> r;i\s
-                        ou r et i = valeurs de la partie reelle/img""")
+                .desc("Constante de la fonction," +
+                        "\nforme r;i " +
+                        "\nou r et i sont les valeurs respectives de la partie reelle/img\n")
                 .argName("constante")
                 .required(false)
                 .build());
@@ -63,10 +58,9 @@ public class CommandApache {
         options.addOption(Option.builder("fo")
                 .longOpt("fonct")
                 .hasArg(true)
-                .desc("""
-                        Fonction pour la fractale,\s
-                        forme 3x2+x+c,\s
-                        avec c obligatoire""")
+                .desc("Fonction pour la fractale, " +
+                        "\nforme 3x2+x+c, " +
+                        "\navec c obligatoire\n")
                 .argName("fonction")
                 .required(false)
                 .build());
@@ -75,7 +69,7 @@ public class CommandApache {
         options.addOption(Option.builder("it")
                 .longOpt("iter")
                 .hasArg(true)
-                .desc("Nombre d'iterations de la fonction")
+                .desc("Nombre d'iterations de la fonction\n")
                 .argName("iterations")
                 .required(false)
                 .build());
@@ -84,18 +78,16 @@ public class CommandApache {
         options.addOption(Option.builder("col")
                 .longOpt("color")
                 .hasArg(true)
-                .desc("""
-                        Choix de la coloration :\s
-                        0(Noir/Blanc),
-                        1(Rouge),
-                        2(Bleu),
-                        3(Vert),
-                        4(Multicolor),
-                        5(Rose/Orange),
-                        6(Orange/Rose),
-                        7(Vert/Bleu),
-                        8(Vert/Rose),
-                        9(Special)""")
+                .desc("Choix de la coloration : " +
+                        "\n0(Noir/Blanc)," +
+                        "\n1(Rouge)," +
+                        "\n2(Bleu)," +
+                        "\n3(Vert)," +
+                        "\n4(Multicolor)," +
+                        "\n5(Rose/Orange)," +
+                        "\n6(Orange/Rose)," +
+                        "\n7(Vert/Bleu)," +
+                        "\n8(Vert/Rose)\n")
                 .argName("coloration")
                 .required(false)
                 .build());
@@ -104,7 +96,7 @@ public class CommandApache {
         options.addOption(Option.builder("fi")
                 .longOpt("fic")
                 .hasArg(true)
-                .desc("Nom du fichier de l'image")
+                .desc("Nom du fichier de l'image\n")
                 .argName("fichier")
                 .required(false)
                 .build());
@@ -114,7 +106,7 @@ public class CommandApache {
                 .longOpt("type")
                 .hasArg(true)
                 .desc("Type de Fractale : " +
-                        "\nJ, M ou S")
+                        "\nJ, M ou S\n")
                 .argName("type")
                 .required(false)
                 .build());
@@ -123,7 +115,7 @@ public class CommandApache {
         options.addOption(Option.builder("o")
                 .longOpt("ord")
                 .hasArg(true)
-                .desc("Ordre du Tapis de Sierpinski")
+                .desc("Ordre du Tapis de Sierpinski\n")
                 .argName("ordre")
                 .required(false)
                 .build());
@@ -131,8 +123,7 @@ public class CommandApache {
         //help
         options.addOption(Option.builder("h")
                 .longOpt("help")
-                .argName("aide")
-                .desc("Aide pour les commandes/arguments")
+                .desc("Aide pour les commandes/arguments\n")
                 .build());
 
         return options;
