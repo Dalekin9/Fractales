@@ -174,10 +174,10 @@ public class Launcher {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
                                     if (tab[1].length() == 1) {
                                         System.out.println("cos x/c");
-                                        liste.add(new double[]{1, 0, 1, 0, 1});
+                                        liste.add(new double[]{1, 0, 1, -1, 1});
                                     } else {
                                         if (tab[1].length() == 2) {
-                                            liste.add(new double[]{1, 0, 1, 0, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                            liste.add(new double[]{1, 0, 1, -1, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
                                         } else {
                                             errorParsing();
                                         }
@@ -199,6 +199,38 @@ public class Launcher {
                             }
                         }
                     }
+                    else if (current.startsWith("sinh(")) {
+                        if (current.charAt(4) == 'c') { //sinh(c)
+                            liste.add(new double[]{1, 0, 4, 0, 0});
+                        } else {
+                            String content = current.substring(4, closingParenthePos(current));
+                            String[] tab = content.split("/");
+                            if (tab.length != 2) errorParsing();
+                            else {
+                                if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 4, -1, 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 4, -1, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            errorParsing();
+                                        }
+                                    }
+                                } else {
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 4, Double.parseDouble(tab[0]), 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 4, Double.parseDouble(tab[0]), Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            errorParsing();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     else if (current.startsWith("sin(")) {
                         if (current.charAt(4) == 'c') { //sin(c)
                             liste.add(new double[]{1, 0, 2, 0, 0});
@@ -209,10 +241,10 @@ public class Launcher {
                             else {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
                                     if (tab[1].length() == 1) {
-                                        liste.add(new double[]{1, 0, 2, 0, 1});
+                                        liste.add(new double[]{1, 0, 2, -1, 1});
                                     } else {
                                         if (tab[1].length() == 2) {
-                                            liste.add(new double[]{1, 0, 2, 0, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                            liste.add(new double[]{1, 0, 2, -1, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
                                         } else {
                                             errorParsing();
                                         }
@@ -232,8 +264,7 @@ public class Launcher {
                         }
                     }
                     else {
-                        String content = current.substring(4, closingParenthePos(current));
-                        String[] tab = content.split("/");
+                        String[] tab = current.split("/");
                         if (tab.length != 2) errorParsing();
                         if (tab[1].length() == 1){
                             liste.add(new double[]{1, 0, 3, Double.parseDouble(tab[0]), 1});
@@ -265,9 +296,14 @@ public class Launcher {
                         }
                     }
                 }
-                else if (current.startsWith("cos(") || current.startsWith("sin(")) {
+                else if (current.startsWith("cos(") || current.startsWith("sin(") || current.startsWith("sinh(")) {
                     System.out.println("cas avec sin ou cos au debut");
-                    String content = current.substring(4, closingParenthePos(current));
+                    String content;
+                    if (current.startsWith("sinh(")){
+                        content = current.substring(5, closingParenthePos(current));
+                    } else {
+                        content = current.substring(4, closingParenthePos(current));
+                    }
                     System.out.println("content : "+content);
                     if (nbX(current) != 1) {
                         errorParsing();
@@ -278,7 +314,9 @@ public class Launcher {
                         data[4] = 0;
                         if (current.startsWith("cos(")) {
                             data[2] = 1;
-                        } else if (current.startsWith("sin(")) {
+                        }else if (current.startsWith("sinh(")) {
+                            data[2] = 4;
+                        }else if (current.startsWith("sin(")) {
                             data[2] = 2;
                         }
                         if (content.charAt(0) == 'x') {
@@ -447,7 +485,6 @@ public class Launcher {
                                 String fic = cmd.getOptionValue("fi");
                                 fractale = fractale.fichier(fic);
                             }
-
                             Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
                             if (cmd.hasOption("fo")) {
                                 LinkedList<double[]> fo = correctFormatFct(cmd.getOptionValue("fo"));

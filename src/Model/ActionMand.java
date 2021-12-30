@@ -43,7 +43,7 @@ public class ActionMand extends RecursiveAction {
         int compt = 0;
         while (compt < to) {
             for (int j = vj; j < data[0].length; j++) {
-                Complex c = new Complex.Builder(x + pas*j, y + pas*vi).build();
+                Complex c = new Complex.Builder((x + pas*j), y + pas*vi).build();
                 data[vi][j] = divergenceIndex(c);
                 compt++;
             }
@@ -66,6 +66,7 @@ public class ActionMand extends RecursiveAction {
         int ite = 0;
         Complex zn = z0;
         Fonction fonction = new Fonction.BuilderFonction(z0).coef(f.getCoeff()).build();
+        //System.out.println(z0);
         while (ite < this.iter && zn.module() <=2){
             zn = fonction.apply(zn);
             ite++;
