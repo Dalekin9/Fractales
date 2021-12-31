@@ -287,7 +287,8 @@ public class ControllerG {
                     err.add("cst");
                     err.add("fo");
                 }else{
-                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
+                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
+                    fonction.cons(new Complex.Builder(cst[0],cst[1] ).build());
                     LinkedList<double[]> fo = validFct(opt.get(6));
                     if (fo == null){
                         err.add("fo");
@@ -364,9 +365,9 @@ public class ControllerG {
         BuilderFractal fract = new BuilderFractal();
         fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
         double[] cst = validCst(opt.get(3));
-        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
-         fract = fract.fonction(fonc);
-         return fract;
+        Fonction fonc = new Fonction.BuilderFonction().coef(validFct(opt.get(6))).cons(new Complex.Builder(cst[0], cst[1]).build()).build();
+        fract = fract.fonction(fonc);
+        return fract;
     }
 
     public void requestZoomOut(){

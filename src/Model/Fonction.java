@@ -12,11 +12,14 @@ public class Fonction implements Function<Complex,Complex>  {
     public static class BuilderFonction {
 
         private LinkedList<double[]> coeff = new LinkedList<>(); // 5x² = {5,2}
-        private final Complex c;
+        private Complex c;
 
-        public BuilderFonction (Complex c){
-            this.c = c;
-            coeff.add(new double[]{1, 2,0});
+        public BuilderFonction (){
+        }
+
+        public BuilderFonction cons (Complex co){
+            this.c = co;
+            return this;
         }
 
         public BuilderFonction coef (LinkedList<double[]> c){
@@ -39,13 +42,13 @@ public class Fonction implements Function<Complex,Complex>  {
     }
 
     public Complex getC() {
-        return c;
+        return new Complex.Builder(c.getP_reel(),c.getP_img()).build();
     }
 
     @Override
     public String toString() {
-        StringBuilder text = new StringBuilder("");
-        StringBuilder fonc = new StringBuilder("");
+        StringBuilder text = new StringBuilder();
+        StringBuilder fonc = new StringBuilder();
         int compt = 0;
         for (double[] doubles : coeff) {
             //cas pour la constante
@@ -102,7 +105,7 @@ public class Fonction implements Function<Complex,Complex>  {
                     }
                     text.append(")");
                 }if(doubles[2] == 4){
-                    text.append("sinh("); // ajout du sin(res de la mult)
+                    text.append("sinh("); // ajout du sinh(res de la mult)
                     if (doubles[0] != 1) {
                         text.append(doubles[0]);
                     }
@@ -136,7 +139,6 @@ public class Fonction implements Function<Complex,Complex>  {
             }
             compt++;
         }
-        text.append(", ou c = ").append(c.toString());
         return String.valueOf(text);
     }
 

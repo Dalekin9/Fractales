@@ -4,16 +4,17 @@ import java.util.concurrent.RecursiveAction;
 
 public class ActionJulia extends RecursiveAction {
 
-    int from, to;
-    double[][] data;
-    double pas;
-    double x;
-    double y;
-    Fonction f;
-    int iter;
-    int min;
+    private final int from, to;
+    private final double[][] data;
+    private final double pas;
+    private final double x;
+    private final double y;
+    private final Fonction f;
+    private final int iter;
+    private final int min;
+    private final int rad;
 
-    public ActionJulia(int f, int t, double[][] d, double pas, double x, double y, Fonction fo, int i, int min){
+    public ActionJulia(int f, int t, double[][] d, double pas, double x, double y, Fonction fo, int i, int min, int rad){
         from = f;
         to = t;
         data = d;
@@ -23,6 +24,7 @@ public class ActionJulia extends RecursiveAction {
         this.f = fo;
         iter = i;
         this.min = min;
+        this.rad = rad;
     }
 
     @Override
@@ -32,8 +34,8 @@ public class ActionJulia extends RecursiveAction {
             return;
         }
         int middle = (from + to) / 2;
-        invokeAll(new ActionJulia(from, middle, data, pas, x, y,f,iter,min),
-                new ActionJulia(middle, to, data, pas, x, y,f,iter,min));
+        invokeAll(new ActionJulia(from, middle, data, pas, x, y,f,iter,min,rad),
+                new ActionJulia(middle, to, data, pas, x, y,f,iter,min,rad));
     }
 
     private void computeDirectly(){
@@ -65,7 +67,7 @@ public class ActionJulia extends RecursiveAction {
     public int divergenceIndex (Complex z0){
         int ite = 0;
         Complex zn = z0;
-        while (ite < this.iter && zn.module() <=2){
+        while (ite < this.iter && zn.module() <=rad){
             zn = f.apply(zn);
             ite++;
         }

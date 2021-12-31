@@ -103,17 +103,7 @@ public class Launcher {
 
     public static boolean containsC(String[] last){
         for (String s : last) {
-            for (int j = 0; j < s.length(); j++) {
-                if (s.charAt(j) == 'c') {
-                    if (j == s.length() - 1) {
-                        return true;
-                    } else {
-                        if (s.charAt(j + 1) != 'o') {
-                            return true;
-                        }
-                    }
-                }
-            }
+            if (containsC(s)) return true;
         }
         return false;
     }
@@ -155,12 +145,9 @@ public class Launcher {
             }
             LinkedList<double[]> liste = new LinkedList<>();
             for (int i = 0; i < aftPlus.length; i++) {
-                System.out.println(i);
                 String current = aftPlus[i];
-                System.out.println("current : "+current);
                 double[] data = new double[5];
                 if (containsC(current)) {
-                    System.out.println("je contiens c");
                     if (current.equals("c")) { //c
                         liste.add(new double[]{1, 0, 0, 0, 0});
                     }
@@ -173,7 +160,6 @@ public class Launcher {
                             if (tab.length == 2) {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
                                     if (tab[1].length() == 1) {
-                                        System.out.println("cos x/c");
                                         liste.add(new double[]{1, 0, 1, -1, 1});
                                     } else {
                                         if (tab[1].length() == 2) {
@@ -200,10 +186,10 @@ public class Launcher {
                         }
                     }
                     else if (current.startsWith("sinh(")) {
-                        if (current.charAt(4) == 'c') { //sinh(c)
+                        if (current.charAt(5) == 'c') { //sinh(c)
                             liste.add(new double[]{1, 0, 4, 0, 0});
                         } else {
-                            String content = current.substring(4, closingParenthePos(current));
+                            String content = current.substring(5, closingParenthePos(current));
                             String[] tab = content.split("/");
                             if (tab.length != 2) errorParsing();
                             else {
@@ -277,7 +263,6 @@ public class Launcher {
                     }
                 }
                 else if (current.charAt(0) == 'x') {
-                    System.out.println("cas ou je commence par x");
                     if (nbX(current) != 1) {
                         errorParsing();
                     } else {
@@ -297,14 +282,12 @@ public class Launcher {
                     }
                 }
                 else if (current.startsWith("cos(") || current.startsWith("sin(") || current.startsWith("sinh(")) {
-                    System.out.println("cas avec sin ou cos au debut");
                     String content;
                     if (current.startsWith("sinh(")){
                         content = current.substring(5, closingParenthePos(current));
                     } else {
                         content = current.substring(4, closingParenthePos(current));
                     }
-                    System.out.println("content : "+content);
                     if (nbX(current) != 1) {
                         errorParsing();
                     } else {
@@ -320,8 +303,6 @@ public class Launcher {
                             data[2] = 2;
                         }
                         if (content.charAt(0) == 'x') {
-                            String[] res = content.split("x");
-                            System.out.println(res.length);
                             data[1] = 1;
                             liste.add(i, data);
                         } else {
@@ -337,7 +318,6 @@ public class Launcher {
                     }
                 }
                 else {
-                    System.out.println("else");
                     if (nbX(current) != 1) {
                         errorParsing();
                     } else {
@@ -413,6 +393,26 @@ public class Launcher {
         return -1;
     }
 
+    /**
+     * Verifie le format d'entree du radius
+     * @param r : radius souhaite
+     * @return l'entier correspondant au radius
+     */
+    public static int correctFormatRadius(String r){
+        try {
+            int o = (int)Double.parseDouble(r);
+            if (o < 0){
+                errorParsing();
+            } else {
+                return o;
+            }
+        }catch(NumberFormatException e) {
+            System.out.println("It is not numerical string");
+            errorParsing();
+        }
+        return -1;
+    }
+
     /*
      * ***************************************************** *
      *              Lancement du Programme
@@ -463,8 +463,10 @@ public class Launcher {
                         if (cmd.hasOption("o")) {
                             errorParsing();
                         }
-                        else if (cmd.hasOption("cst") && cmd.hasOption("r") && cmd.hasOption("p")){
-                            double[] cst = correctFormatCst(cmd.getOptionValue("cst"));
+                        else if (type.equals("J") && !cmd.hasOption("cst")){
+                            errorParsing();
+                        }
+                        else if (cmd.hasOption("r") && cmd.hasOption("p")){
                             double[] r = correctFormatRect(cmd.getOptionValue("r"));
                             double p = correctFormatPas(cmd.getOptionValue("p"));
 
@@ -481,26 +483,37 @@ public class Launcher {
                             BuilderFractal fractale = new BuilderFractal();
                             fractale = fractale.rect(r).type(type).pas(p);
 
-                            if (cmd.hasOption("fi")){
-                                String fic = cmd.getOptionValue("fi");
-                                fractale = fractale.fichier(fic);
-                            }
-                            Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
+                            Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
                             if (cmd.hasOption("fo")) {
                                 LinkedList<double[]> fo = correctFormatFct(cmd.getOptionValue("fo"));
                                 fonction = fonction.coef(fo);
                             }
+                            if (cmd.hasOption("cst")){
+                                double[] cst = correctFormatCst(cmd.getOptionValue("cst"));
+                                fonction.cons(new Complex.Builder(cst[0],cst[1]).build());
+                            }
                             fractale = fractale.fonction(fonction.build());
-                            System.out.println("fin de fonction");
 
                             if (cmd.hasOption("col")){
                                 int color = correctFormatColor(cmd.getOptionValue("col"));
                                 fractale = fractale.coloration(color);
                             }
+
                             if (cmd.hasOption("it")){
                                 int ite = correctFormatIte(cmd.getOptionValue("it"));
                                 fractale = fractale.iter(ite);
                             }
+
+                            if (cmd.hasOption("fi")){
+                                String fic = cmd.getOptionValue("fi");
+                                fractale = fractale.fichier(fic);
+                            }
+
+                            if (cmd.hasOption("ra")){
+                                int rad = correctFormatRadius(cmd.getOptionValue("ra"));
+                                fractale = fractale.radius(rad);
+                            }
+
                             Fractal fractal = fractale.build();
                             fractal.launchFractale();
 
