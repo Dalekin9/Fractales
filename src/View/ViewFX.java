@@ -109,7 +109,7 @@ public class ViewFX {
         VBox pasBox = new VBox();
         pasBox.setAlignment(Pos.CENTER);
         pasBox.setSpacing(7);
-        Label labelPas = new Label("Pas de discrétisation");
+        Label labelPas = new Label("Pas de discretisation");
         TextField fieldPas = new TextField();
         fieldPas.setPromptText("0.001");
         textFields.add(fieldPas);
@@ -119,7 +119,7 @@ public class ViewFX {
         VBox iterBox = new VBox();
         iterBox.setAlignment(Pos.CENTER);
         iterBox.setSpacing(7);
-        Label labelIter = new Label("Nombre d'itérations");
+        Label labelIter = new Label("Nombre d'iterations");
         TextField fieldIter = new TextField("500");
         fieldIter.setPrefWidth(170);
         textFields.add(fieldIter);
@@ -231,7 +231,7 @@ public class ViewFX {
         lockAll();
 
         //Bouton de confirmation
-        Button createButton = new Button("Créer votre fractale");
+        Button createButton = new Button("Creer votre fractale");
         createButton.setOnAction(e -> {
             ArrayList<String> opt = new ArrayList<>();
             if(typechoice.getValue() == null) {
@@ -493,7 +493,7 @@ public class ViewFX {
         createBox.setOnMouseClicked(e -> showSetMenu());
         ImageView createImg = new ImageView();
         createImg.setImage(new Image(new File("Ressources/create.png").toURI().toString()));
-        Label createLabel = new Label("Créez une fractale !");
+        Label createLabel = new Label("Creez une fractale !");
         createLabel.setFont(new Font(15));
         createBox.getChildren().addAll(createImg,createLabel);
         GridPane.setHalignment(createBox,HPos.CENTER);
@@ -504,7 +504,7 @@ public class ViewFX {
         howToBox.setOnMouseClicked(e -> howToCreateScreen());
         ImageView howToImg = new ImageView();
         howToImg.setImage(new Image(new File("Ressources/howTo.png").toURI().toString()));
-        Label howToLabel = new Label("Comment créer une fractale ?");
+        Label howToLabel = new Label("Comment creer une fractale ?");
         howToLabel.setFont(new Font(15));
         howToBox.getChildren().addAll(howToImg,howToLabel);
         GridPane.setHalignment(howToBox,HPos.CENTER);
@@ -603,13 +603,13 @@ public class ViewFX {
 
         VBox juliaBox = new VBox();
 
-        ImageView juliaImg = new ImageView(new Image(new File("Ressources/JuliaExpl.png").toURI().toString()));
+        ImageView juliaImg = new ImageView(new Image(new File("Ressources/JuliaExpl2.png").toURI().toString()));
         Text juliaText = new Text("""
-                    L'ensemble de Julia est un ensemble défini à partir
+                    L'ensemble de Julia est un ensemble defini a partir
                     du comportement d'une fonction. Ainsi pour une
-                    fonction f, et une valeur donnée c, cela
-                    correspond à l'ensemble des valeurs pour
-                    lequelles la suite est bornée.
+                    fonction f, et une valeur donnee c, cela
+                    correspond a l'ensemble des valeurs pour
+                    lequelles la suite est bornee.
                 """);
         juliaText.setFont(new Font(13));
         VBox.setMargin(juliaImg,new Insets(5));
@@ -620,8 +620,8 @@ public class ViewFX {
         ImageView mandelImg = new ImageView(new Image(new File("Ressources/MandelbrotExpl.png").toURI().toString()));
         Text mandelText = new Text("""
               L'ensemble de Mandelbrot est l'ensemble des point
-              correspondant à un ensemble de Julia. Si un
-              ensemble de Julia appartient à l'ensemble de
+              correspondant a un ensemble de Julia. Si un
+              ensemble de Julia appartient a l'ensemble de
               Mandelbrot, cela signifie qu'il s'agit d'un
               ensemble connexe.
               """);
@@ -634,12 +634,12 @@ public class ViewFX {
         ImageView sierpImg = new ImageView(new Image(new File("Ressources/SierpinskiExpl.png").toURI().toString()));
         Text sierpText = new Text("""
                      Concernant le Tapis de Sierpinski, il s'agit d'une
-                     généralisation de l'ensemble de Cantor en 2D.
-                     C'est une fractale obtenue en partant d'un carré,
-                     où, à chaque étape, on decoupe le carré initial
-                     en 9 carrés égaux grâce à une grille de 3x3,
-                     et où on supprime le carré central.\s
-                     On réitère ce processus sur les 8 autres carrés
+                     generalisation de l'ensemble de Cantor en 2D.
+                     C'est une fractale obtenue en partant d'un carre,
+                     ou, a chaque etape, on decoupe le carre initial
+                     en 9 carres egaux grace a une grille de 3x3,
+                     et ou on supprime le carre central.\s
+                     On reitere ce processus sur les 8 autres carres
                      restant selon l'ordre voulu.
                 """);
         sierpText.setFont(new Font(13));
@@ -670,23 +670,23 @@ public class ViewFX {
         GridPane grid = new GridPane();
 
         Text howToText = new Text("""
-                Pour créer votre fractale :
+                Pour creer votre fractale :
                 Choisissez le type de la fractale, si voulez :
                 
                    -Une fractale de Julia ou Mandelbrot, alors veulliez rentrer :
-                       -La partie réelle et imaginaire de la constante de la fonction
+                       -La partie reelle et imaginaire de la constante de la fonction
                        -La fonction pour la fractale :
-                       Chaque monome est sous forme : "x(degré du monome)"   x²+5 -> x2+5
+                       Chaque monome est sous forme : "x(degre du monome)"   x²+5 -> x2+5
                        -Le nombre d'iterations de la fonction
-                       -Le pas de discrétisation qui doit être strictement positif et
-                        inférieur à la différence entre l'abscisse ou l'ordonnée des 2 points du rectangle
-                       -Les bornes du rectangle à afficher sous la forme "(Abscisse point 1);(Abscisse point 2);(Ordonnée point 1);(Ordonnée point 2)"
+                       -Le pas de discretisation qui doit etre strictement positif et
+                        inferieur a la difference entre l'abscisse ou l'ordonnee des 2 points du rectangle
+                       -Les bornes du rectangle a afficher sous la forme "(Abscisse point 1);(Abscisse point 2);(Ordonnee point 1);(Ordonnee point 2)"
                        
                    -Une fractale du tapis de Sierpinski, alors veuillez rentrer :
                         -L'ordre du Tapis de Sierpinski
                        
                    -Le nom du fichier de l'image
-                   -La couleur de l'image désirée
+                   -La couleur de l'image désiree
                 """);
 
         Button backButton = new Button("Retour");
@@ -716,9 +716,9 @@ public class ViewFX {
             switch (e) {
                 case "cst" -> alert.setContentText(alert.getContentText() + "Constante\n");
                 case "r" -> alert.setContentText(alert.getContentText() + "Rectangle de visualisation\n");
-                case "p" -> alert.setContentText(alert.getContentText() + "Pas de discrétisation\n");
+                case "p" -> alert.setContentText(alert.getContentText() + "Pas de discretisation\n");
                 case "fo" -> alert.setContentText(alert.getContentText() + "Fonction\n");
-                case "it" -> alert.setContentText(alert.getContentText() + "Nombre d'itérations\n");
+                case "it" -> alert.setContentText(alert.getContentText() + "Nombre d'iterations\n");
                 case "o" -> alert.setContentText(alert.getContentText() + "Ordre\n");
                 case "rp" -> alert.setContentText(alert.getContentText() + "Pas et Rectangle incompatibles\n");
             }

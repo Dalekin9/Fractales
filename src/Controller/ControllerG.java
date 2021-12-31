@@ -420,17 +420,30 @@ public class ControllerG {
                     }
                 }
 
-                if (cst == null){
-                    err.add("cst");
-                    err.add("fo");
-                }else{
-                    LinkedList<double[]> fo = validFct(opt.get(6));
-                    if (fo == null){
+                if(opt.get(0).equals("Julia")) {
+                    if (cst == null) {
+                        err.add("cst");
                         err.add("fo");
-                    }else{
+                    } else {
+                        LinkedList<double[]> fo = validFct(opt.get(6));
+                        if (fo == null) {
+                            err.add("fo");
+                        } else {
+                            Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
+                            fonction.coef(fo);
+                            fonction.cons(new Complex.Builder(cst[0], cst[1]).build());
+                            fract = fract.fonction(fonction.build());
+                        }
+                    }
+                }
+
+                if (opt.get(0).equals("Mandelbrot")){
+                    LinkedList<double[]> fo = validFct(opt.get(6));
+                    if (fo == null) {
+                        err.add("fo");
+                    } else {
                         Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
                         fonction.coef(fo);
-                        fonction.cons(new Complex.Builder(cst[0],cst[1] ).build());
                         fract = fract.fonction(fonction.build());
                     }
                 }
@@ -514,7 +527,7 @@ public class ControllerG {
     public void requestZoomOut(){
         BuilderFractal zoomFract;
         ArrayList<String> opt = fractaleOpt;
-        if (opt.get(0).equals("Julia") || opt.get(0).equals("Mandelbrot")){
+        if (opt.get(0).equals("Julia") || opt.get(0).equals("Mandelbrot") ){
             zoomFract = sameFract(opt);
             double[] rect = validRect(opt.get(4));
             double diffW10Perc = (rect[1] - rect[0]) * 0.1;
@@ -584,9 +597,12 @@ public class ControllerG {
         BuilderFractal fract = new BuilderFractal();
         fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
         double[] cst = validCst(opt.get(3));
-        Fonction fonc = new Fonction.BuilderFonction().cons(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
-         fract = fract.fonction(fonc);
-         return fract;
+        Fonction.BuilderFonction fonc = new Fonction.BuilderFonction().coef(validFct(opt.get(6)));
+        if (opt.get(0).charAt(0) == 'J') {
+            fonc = fonc.cons(new Complex.Builder(cst[0], cst[1]).build());
+        }
+        fract = fract.fonction(fonc.build());
+        return fract;
     }
 
     /*
