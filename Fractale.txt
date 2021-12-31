@@ -1,6 +1,0 @@
-Descriptif de la Fractale :
-
-Type : Sierpinski
-
-Ordre : 6
-Coloration : Noire et Blanche

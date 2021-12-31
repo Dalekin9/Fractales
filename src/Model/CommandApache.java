@@ -38,7 +38,7 @@ public class CommandApache {
                 .required(false)
                 .build());
 
-        //rectangle
+        //radius
         options.addOption(Option.builder("ra")
                 .longOpt("rad")
                 .hasArg(true)
