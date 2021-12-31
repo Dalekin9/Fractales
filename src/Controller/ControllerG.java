@@ -16,6 +16,9 @@ public class ControllerG {
 
     public ControllerG(){}
 
+    /**
+    *  Transforme un string correspond a une couleur en sa valeur numérique attribuée
+    */
     public int colorFromField(String str){
         switch (str){
             case "Rouge" -> {
@@ -47,6 +50,12 @@ public class ControllerG {
             }
         }
     }
+
+    /*
+     ************************************************************
+     *  Versions graphique de fonctions définies dans Launcher  *
+     ************************************************************
+     */
 
     public static double[] validCst(String constante){
         String[] tab = constante.split(";");
@@ -445,6 +454,16 @@ public class ControllerG {
         return rectangle.toString();
     }
 
+    /*
+    * *********************************** *
+    * Fonctions de Zoom et de Déplacement *
+    * *********************************** *
+    */
+
+    /**
+     *  Effectue un zoom de 20% sur le centre de la fractale actuelle.
+     *  Réduit la taille du rectangle de 20% et réduit le pas de 20%
+     */
     public void requestZoomIn(){
         BuilderFractal zoomFract;
         ArrayList<String> opt = fractaleOpt;
@@ -467,15 +486,10 @@ public class ControllerG {
         }
     }
 
-    public BuilderFractal sameFract(ArrayList<String> opt){
-        BuilderFractal fract = new BuilderFractal();
-        fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
-        double[] cst = validCst(opt.get(3));
-        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
-         fract = fract.fonction(fonc);
-         return fract;
-    }
-
+    /**
+     *  Effectue un dézoom de 20%
+     *  Augmente la taille du rectangle de 20% et augmente le pas de 20%
+     */
     public void requestZoomOut(){
         BuilderFractal zoomFract;
         ArrayList<String> opt = fractaleOpt;
@@ -497,6 +511,10 @@ public class ControllerG {
         }
     }
 
+    /**
+     * Effectue un mouvement du plan de la fractale vers l'un des plans points cardinaux
+     * @param direction: String indiquant la direction du déplacement
+     * */
     public void requestMove(String direction){
         BuilderFractal zoomFract;
         ArrayList<String> opt = fractaleOpt;
@@ -536,6 +554,29 @@ public class ControllerG {
         }
     }
 
+    /**
+     * Fonction remplissant la plupart des éléments d'une fractale
+     * @param opt : La liste d'options rentrée par l'utilisateur
+     * @return Un objet BuilderFractal partiellement défini
+     **/
+    public BuilderFractal sameFract(ArrayList<String> opt){
+        BuilderFractal fract = new BuilderFractal();
+        fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
+        double[] cst = validCst(opt.get(3));
+        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
+         fract = fract.fonction(fonc);
+         return fract;
+    }
+
+    /*
+    * *************************************** *
+    *            Fonctions autres             *
+    * *************************************** *
+    */
+
+    /**
+     * Sauvegarde la fractale actuellement affichée dans un fichier
+     */
     public void saveImg(){
         File outputFile = new File(fileName(fractaleOpt.get(1)) + ".png");
         BufferedImage bImage = SwingFXUtils.fromFXImage(view.getFractImg().getImage(), null);
@@ -546,6 +587,7 @@ public class ControllerG {
         }
     }
 
+    //Setter de la vue
     public void setView(ViewFX view) {
         this.view = view;
     }

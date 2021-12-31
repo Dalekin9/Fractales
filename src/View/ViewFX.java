@@ -2,6 +2,7 @@ package View;
 
 import Controller.ControllerG;
 import Model.Fractal;
+import Model.Julia;
 import Model.Sierpinski;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
@@ -26,7 +27,13 @@ import javafx.embed.swing.SwingFXUtils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ViewFX {
 
@@ -45,6 +52,9 @@ public class ViewFX {
         this.control = control;
     }
 
+    /**
+     * Verouille tous les champs disponibles
+     */
     public void lockAll(){
         textFields.forEach(e -> {
             e.setFocusTraversable(false);
@@ -53,7 +63,9 @@ public class ViewFX {
         colorChoice.setDisable(true);
     }
 
-
+    /**
+     * Déverouille tous les champs étant utilisés pour définir une Fractale de Julia ou de Mandelbrot
+     */
     public void unlockJulMand(){
         julMandOpt.forEach(e -> {
             e.setBackground(Background.EMPTY);
@@ -62,6 +74,9 @@ public class ViewFX {
         });
     }
 
+    /**
+     * Déverouille tous les champs étant utilisés pour définir une Fractale de Sierpinski
+     */
     public void unlockSierp(){
         sierpOpt.forEach(e -> {
             e.setBackground(Background.EMPTY);
@@ -70,6 +85,9 @@ public class ViewFX {
         });
     }
 
+    /**
+     * Création du menu de définition de la fractale
+     */
     public void showSetMenu(){
 
         GridPane root = new GridPane();
@@ -79,12 +97,15 @@ public class ViewFX {
         root.setVgap(20);
 
 
-        /*
-         * Création des éléments du layout
-         */
+        /* ******************************* *
+         * Création des éléments du layout *
+         * ******************************* */
 
+        //Titre
         Label labelTitle = new Label("Let's create a fractal!");
+        labelTitle.setFont(new Font(20));
 
+        //Choix du type de fractale
         VBox typeBox = new VBox();
         typeBox.setAlignment(Pos.CENTER);
         typeBox.setSpacing(7);
@@ -121,6 +142,7 @@ public class ViewFX {
 
         });
 
+        //Choix du Pas
         VBox pasBox = new VBox();
         pasBox.setAlignment(Pos.CENTER);
         pasBox.setSpacing(7);
@@ -130,6 +152,7 @@ public class ViewFX {
         textFields.add(fieldPas);
         julMandOpt.add(fieldPas);
 
+        //Choix du nombre d'itérations
         VBox iterBox = new VBox();
         iterBox.setAlignment(Pos.CENTER);
         iterBox.setSpacing(7);
@@ -139,18 +162,16 @@ public class ViewFX {
         textFields.add(fieldIter);
         julMandOpt.add(fieldIter);
 
+        //Choix de la couleur
         VBox colorBox = new VBox();
         colorBox.setAlignment(Pos.CENTER);
         colorBox.setSpacing(7);
         Label labelColor = new Label("Couleur");
         this.colorChoice = new ChoiceBox<>(FXCollections.observableArrayList(
                 "Noir et Blanc","Bleu","Rouge","Vert","Multicolore","Rose-Orange","Orange-Rose","Vert-Bleu","Vert-Rose"));
-        this.colorChoice.setOnAction(e ->{
-
-        });
         colorChoice.setValue("Noir et Blanc");
 
-        //Box : définition du nom du fichier
+        //Choix du nom du fichier
         VBox ficBox = new VBox();
         ficBox.setAlignment(Pos.CENTER);
         ficBox.setSpacing(7);
@@ -160,6 +181,7 @@ public class ViewFX {
         julMandOpt.add(fieldFic);
         sierpOpt.add(fieldFic);
 
+        //Choix du rectangle
         VBox rectBox = new VBox();
         rectBox.setAlignment(Pos.CENTER);
         rectBox.setSpacing(7);
@@ -169,7 +191,7 @@ public class ViewFX {
         textFields.add(fieldRect);
         julMandOpt.add(fieldRect);
 
-
+        //Choix de la constante
         VBox constantBox = new VBox();
         constantBox.setAlignment(Pos.CENTER);
         constantBox.setSpacing(7);
@@ -195,6 +217,7 @@ public class ViewFX {
         textFields.add(fieldFonc);
         julMandOpt.add(fieldFonc);
 
+        //Choix de l'ordre
         VBox orderBox = new VBox();
         orderBox.setSpacing(7);
         orderBox.setAlignment(Pos.CENTER);
@@ -203,9 +226,9 @@ public class ViewFX {
         textFields.add(fieldOrdre);
         sierpOpt.add(fieldOrdre);
 
-
         lockAll();
 
+        //Bouton de confirmation
         Button createButton = new Button("Créer votre fractale");
         createButton.setOnAction(e -> {
             ArrayList<String> opt = new ArrayList<>();
@@ -231,58 +254,66 @@ public class ViewFX {
             showAlertOpt(control.fractalLaunch(opt));
         });
 
+        //Bouton de retour
         Button backButton = new Button("Retour");
         backButton.setOnAction(e -> mainMenu());
 
 
+        /* **************************** *
+         * Setup des éléments du layout *
+         * **************************** */
 
-
-        /*
-         *
-         * Setup des éléments du layout
-         *
-         */
+        //Titre
         GridPane.setHalignment(labelTitle, HPos.CENTER);
         root.add(labelTitle, 0, 0, 3, 1);
 
+        //Type
         typeBox.getChildren().addAll(labelType,typechoice);
         root.add(typeBox,1,1,2,1);
 
+        //Pas
         pasBox.getChildren().addAll(labelPas,fieldPas);
         root.add(pasBox,1,2,1,1);
         fieldPas.getParent().requestFocus();
 
+        //Itération
         iterBox.getChildren().addAll(labelIter,fieldIter);
         root.add(iterBox,2,2,1,1);
 
+        //Couleur
         GridPane.setHalignment(colorBox, HPos.CENTER);
         colorBox.getChildren().addAll(labelColor,colorChoice);
         root.add(colorBox,1,3,1,1);
 
+        //Nom du fichier
         ficBox.getChildren().addAll(labelFic,fieldFic);
         root.add(ficBox,2,3,1,1);
 
-
+        //Constante
         GridPane.setHalignment(constantBox, HPos.CENTER);
         HBox.setMargin(labelIm, new Insets(0,10,0,10));
         constant.getChildren().addAll(fieldConstantR,labelIm,fieldConstantI);
         constantBox.getChildren().addAll(labelConstant,constant);
         root.add(constantBox,1,4,1,1);
 
+        //Fonction
         foncBox.getChildren().addAll(labelFonc,fieldFonc);
         root.add(foncBox,2,4,1,1);
 
+        //Ordre
         orderBox.getChildren().addAll(labelOrder,fieldOrdre);
         root.add(orderBox, 2,5,1,1);
 
+        //Rectangle de visualisation
         rectBox.getChildren().addAll(labelRect,fieldRect);
         root.add(rectBox,1,5,1,1);
         fieldRect.getParent().requestFocus();
 
-        // Horizontal alignment for create button.
+        //Bouton de confirmation
         GridPane.setHalignment(createButton, HPos.CENTER);
         root.add(createButton, 1, 6,2,1);
 
+        //Bouton de retour
         GridPane.setHalignment(backButton, HPos.CENTER);
         root.add(backButton,1,7,2,1);
 
@@ -295,17 +326,23 @@ public class ViewFX {
         mainStage.show();
     }
 
-
+    /**
+     * Creation du panneau de commande lors de l'affichage d'une fractale
+     * @return La VBox correspondant au panneau de commande
+     */
     public VBox createControlPanel(){
         previewImage.getChildren().clear();
 
+        //Bouton de retour
         VBox main = new VBox();
         Button backButton = new Button("Retour");
         backButton.setOnAction(e -> showSetMenu());
 
+        //Bouton de sauvegarde
         Button saveButton = new Button("Sauvegarder cette fractale");
         saveButton.setOnAction(e -> control.saveImg());
 
+        //Boutons de zoom et de dézoom
         Button zoomIn,zoomOut;
         zoomIn = new Button("+");
         zoomIn.setOnAction(e -> control.requestZoomIn());
@@ -329,6 +366,13 @@ public class ViewFX {
         return main;
     }
 
+    /**
+     * Fonction qui réduit la taille de l'image si elle est trop grande pour l'écran de l'utilisateur
+     * @param width Largeur de l'image originale
+     * @param height Hauteur de l'image originale
+     * @param image L'image originale
+     * @return L'image originale redimensionée ou l'image originale
+     */
     public WritableImage resizeIfNecessary(int width, int height, WritableImage image){
         WritableImage newImg = image;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -337,6 +381,7 @@ public class ViewFX {
         double ratioW = screenWidth / width;
         double ratioH = screenHeight / height;
         if (ratioW < 1 || ratioH < 1){
+
             BufferedImage buffImage = SwingFXUtils.fromFXImage(newImg,null);
             java.awt.Image resultingImage;
             BufferedImage outputImage;
@@ -353,6 +398,10 @@ public class ViewFX {
         return newImg;
     }
 
+    /**
+     * Affiche la fractale de Sierpinski donnée en paramètre.
+     * @param fractal La fractale de Sierpinski à afficher
+     */
     public void showFractalS(Fractal fractal){
         double[][] tab_ind = fractal.getTableau();
         int tabLength = ((Sierpinski)fractal).getTab().length;
@@ -386,6 +435,10 @@ public class ViewFX {
         mainStage.show();
     }
 
+    /**
+     * Affiche la fractale de Julia ou de Mandelbrot donnée en paramètre.
+     * @param fractal La fractale à afficher
+     */
     public void showFractalJM(Fractal fractal){
         double[][] tab_index = fractal.getTableau();
         WritableImage image = new WritableImage(tab_index[0].length, tab_index.length);
@@ -416,6 +469,9 @@ public class ViewFX {
         mainStage.show();
     }
 
+    /**
+     * Affiche le Menu principal
+     */
     public void mainMenu(){
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.TOP_CENTER);
@@ -451,6 +507,7 @@ public class ViewFX {
 
         VBox exempleBox = new VBox();
         exempleBox.setAlignment(Pos.CENTER);
+        exempleBox.setOnMouseClicked(e -> galleryScreen());
         ImageView exempleImg = new ImageView();
         exempleImg.setImage(new Image(new File("Ressources/gallery.png").toURI().toString()));
         Label exempleLabel = new Label("Exemples de fractales !");
@@ -460,6 +517,7 @@ public class ViewFX {
         GridPane.setValignment(exempleBox, VPos.CENTER);
 
         VBox explainBox = new VBox();
+        explainBox.setOnMouseClicked(e -> presentationScreen());
         explainBox.setAlignment(Pos.CENTER);
         ImageView explainImg = new ImageView();
         explainImg.setImage(new Image(new File("Ressources/explanations.png").toURI().toString()));
@@ -484,45 +542,125 @@ public class ViewFX {
         mainStage.show();
     }
 
+    /**
+     * Affiche la gallerie de fractales intéressantes
+     */
     public void galleryScreen(){
         VBox root = new VBox();
         ScrollPane gallery = new ScrollPane();
-        
+
+        HBox images = new HBox();
+        HBox.setHgrow(gallery,Priority.ALWAYS);
+        ImageView curr = new ImageView();
+
+        /*
+         * Récupère toutes les images contenues dans le dossier Gallery et les ajoute à l'HBox
+         */
+        try {
+            List<File> files = Files.list(Paths.get("Ressources/Gallery"))
+                    .map(Path::toFile).collect(Collectors.toList());
+
+            for (File file : files){
+                curr = new ImageView();
+                curr.setImage(new Image(file.toURI().toString()));
+                images.getChildren().add(curr);
+            }
+        } catch (IOException e) {
+            System.out.println("Erreur de lecture");
+        }
+
+        if (curr.getImage() == null){
+            System.out.println("Error");
+            return;
+        }
+
+        gallery.setContent(images);
 
         Button backButton = new Button("Retour");
         backButton.setOnAction(e -> mainMenu());
+        root.setAlignment(Pos.CENTER);
+        root.setSpacing(10);
+
+        root.getChildren().addAll(gallery,backButton);
+
+        mainStage.setScene(new Scene(root,1000,500));
+        mainStage.show();
     }
 
+    /**
+     * Affiche la présentation de fractales
+     */
     public void presentationScreen(){
         GridPane grid = new GridPane();
 
+        Button backButton = new Button("Retour");
+        backButton.setOnAction(e -> mainMenu());
+
         VBox juliaBox = new VBox();
-        juliaBox.setAlignment(Pos.TOP_CENTER);
-        ImageView juliaImg = new ImageView(new Image(new File("JuliaExemp.png").toURI().toString()));
+
+        ImageView juliaImg = new ImageView(new Image(new File("Ressources/JuliaExpl.png").toURI().toString()));
         Text juliaText = new Text("""
+                    L'ensemble de Julia est un ensemble défini à partir
+                    du comportement d'une fonction. Ainsi pour une
+                    fonction f, et une valeur donnée c, cela
+                    correspond à l'ensemble des valeurs pour
+                    lequelles la suite est bornée.
                 """);
+        juliaText.setFont(new Font(13));
+        VBox.setMargin(juliaImg,new Insets(5));
+        VBox.setMargin(juliaText,new Insets(5));
         juliaBox.getChildren().addAll(juliaImg,juliaText);
-
         VBox mandelBox = new VBox();
-        mandelBox.setAlignment(Pos.TOP_CENTER);
-        ImageView mandelImg = new ImageView(new Image(new File("MandelExemp.png").toURI().toString()));
+
+        ImageView mandelImg = new ImageView(new Image(new File("Ressources/MandelbrotExpl.png").toURI().toString()));
         Text mandelText = new Text("""
-                
-                """);
-
+              L'ensemble de Mandelbrot est l'ensemble des point
+              correspondant à un ensemble de Julia. Si un
+              ensemble de Julia appartient à l'ensemble de
+              Mandelbrot, cela signifie qu'il s'agit d'un
+              ensemble connexe.
+              """);
+        mandelText.setFont(new Font(13));
+        VBox.setMargin(mandelImg,new Insets(5));
+        VBox.setMargin(mandelText,new Insets(5));
+        mandelBox.getChildren().addAll(mandelImg,mandelText);
         VBox sierpBox = new VBox();
-        mandelBox.setAlignment(Pos.TOP_CENTER);
-        ImageView sierpImg = new ImageView(new Image(new File("SierpExemp.png").toURI().toString()));
+
+        ImageView sierpImg = new ImageView(new Image(new File("Ressources/SierpinskiExpl.png").toURI().toString()));
         Text sierpText = new Text("""
-                
+                     Concernant le Tapis de Sierpinski, il s'agit d'une
+                     généralisation de l'ensemble de Cantor en 2D.
+                     C'est une fractale obtenue en partant d'un carré,
+                     où, à chaque étape, on decoupe le carré initial
+                     en 9 carrés égaux grâce à une grille de 3x3,
+                     et où on supprime le carré central.\s
+                     On réitère ce processus sur les 8 autres carrés
+                     restant selon l'ordre voulu.
                 """);
+        sierpText.setFont(new Font(13));
+        VBox.setMargin(sierpImg,new Insets(5));
+        VBox.setMargin(sierpText,new Insets(5));
+        sierpBox.getChildren().addAll(sierpImg,sierpText);
 
-        VBox.setMargin(mandelBox,new Insets(10));
-        VBox.setMargin(juliaBox,new Insets(10));
-        VBox.setMargin(sierpBox,new Insets(10));
+        grid.setHgap(30);
 
+        grid.add(juliaBox,0,0);
+        grid.add(mandelBox,1,0);
+        grid.add(sierpBox,2,0);
+        grid.add(backButton,1,1);
+
+        grid.setAlignment(Pos.TOP_CENTER);
+        grid.setStyle("-fx-background-color: radial-gradient(center 50% 50% , radius 100% , #FFFFFF, #000000);");
+        GridPane.setHalignment(backButton,HPos.CENTER);
+
+        mainStage.setScene(new Scene(grid,1000,600));
+        mainStage.show();
     }
 
+    /**
+     * Affiche l'écran d'information sur les paramètres à rentrer
+     * pour afficher une fractale.
+     */
     public void howToCreateScreen(){
         GridPane grid = new GridPane();
 
@@ -557,6 +695,10 @@ public class ViewFX {
         mainStage.show();
     }
 
+    /**
+     * Affiche une boite de dialogue si des paramètres n'ont pas été rentrés sous la bonne forme
+     * @param errOpt La liste de champs ayant une erreur
+     */
     public void showAlertOpt(ArrayList<String> errOpt){
         if (errOpt.isEmpty()){
             return;
@@ -579,6 +721,9 @@ public class ViewFX {
         alert.showAndWait();
     }
 
+    /**
+     * Affiche une alerte si l'utilisateur essaye de créer une fractale sans choisir le type
+     */
     public void showAlertType(){
         Alert typeAlert = new Alert(Alert.AlertType.ERROR);
         typeAlert.setTitle("Fractal type is null");
