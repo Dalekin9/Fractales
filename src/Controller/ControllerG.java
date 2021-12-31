@@ -101,32 +101,24 @@ public class ControllerG {
 
     public static boolean containsC(String[] last){
         for (String s : last) {
-            for (int j = 0; j < s.length(); j++) {
-                if (s.charAt(j) == 'c') {
-                    if (j == s.length() - 1) {
-                        return true;
-                    } else {
-                        if (s.charAt(j + 1) != 'o') {
-                            return true;
-                        }
-                    }
-                }
-            }
+            if (containsC(s)) return true;
         }
         return false;
     }
 
     public static boolean containsC(String last){
-        if(last.equals("c")){
-            return true;
-        }else{
-            for (int i = 0; i < last.length(); i++){
-                if(last.charAt(i) == 'c'){
+        for (int j = 0; j < last.length(); j++){
+            if(last.charAt(j) == 'c'){
+                if (j == last.length() - 1) {
                     return true;
+                }else {
+                    if (last.charAt(j+1) != 'o'){
+                        return true;
+                    }
                 }
             }
-            return false;
         }
+        return false;
     }
 
     public static int closingParenthePos(String mon){
@@ -146,12 +138,9 @@ public class ControllerG {
             }
             LinkedList<double[]> liste = new LinkedList<>();
             for (int i = 0; i < aftPlus.length; i++) {
-                System.out.println(i);
                 String current = aftPlus[i];
-                System.out.println("current : "+current);
                 double[] data = new double[5];
                 if (containsC(current)) {
-                    System.out.println("je contiens c");
                     if (current.equals("c")) { //c
                         liste.add(new double[]{1, 0, 0, 0, 0});
                     }
@@ -164,11 +153,10 @@ public class ControllerG {
                             if (tab.length == 2) {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
                                     if (tab[1].length() == 1) {
-                                        System.out.println("cos x/c");
-                                        liste.add(new double[]{1, 0, 1, 0, 1});
+                                        liste.add(new double[]{1, 0, 1, -1, 1});
                                     } else {
                                         if (tab[1].length() == 2) {
-                                            liste.add(new double[]{1, 0, 1, 0, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                            liste.add(new double[]{1, 0, 1, -1, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
                                         } else {
                                             return null;
                                         }
@@ -190,6 +178,38 @@ public class ControllerG {
                             }
                         }
                     }
+                    else if (current.startsWith("sinh(")) {
+                        if (current.charAt(5) == 'c') { //sinh(c)
+                            liste.add(new double[]{1, 0, 4, 0, 0});
+                        } else {
+                            String content = current.substring(5, closingParenthePos(current));
+                            String[] tab = content.split("/");
+                            if (tab.length != 2) return null;
+                            else {
+                                if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 4, -1, 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 4, -1, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            return null;
+                                        }
+                                    }
+                                } else {
+                                    if (tab[1].length() == 1) {
+                                        liste.add(new double[]{1, 0, 4, Double.parseDouble(tab[0]), 1});
+                                    } else {
+                                        if (tab[1].length() == 2) {
+                                            liste.add(new double[]{1, 0, 4, Double.parseDouble(tab[0]), Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                        } else {
+                                            return null;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     else if (current.startsWith("sin(")) {
                         if (current.charAt(4) == 'c') { //sin(c)
                             liste.add(new double[]{1, 0, 2, 0, 0});
@@ -200,10 +220,10 @@ public class ControllerG {
                             else {
                                 if (tab[0].equals("x")) { // cos(x/c) ou cos(x/c2) ou 2 = puissance
                                     if (tab[1].length() == 1) {
-                                        liste.add(new double[]{1, 0, 2, 0, 1});
+                                        liste.add(new double[]{1, 0, 2, -1, 1});
                                     } else {
                                         if (tab[1].length() == 2) {
-                                            liste.add(new double[]{1, 0, 2, 0, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
+                                            liste.add(new double[]{1, 0, 2, -1, Double.parseDouble(String.valueOf(tab[1].charAt(1)))});
                                         } else {
                                             return null;
                                         }
@@ -223,8 +243,7 @@ public class ControllerG {
                         }
                     }
                     else {
-                        String content = current.substring(4, closingParenthePos(current));
-                        String[] tab = content.split("/");
+                        String[] tab = current.split("/");
                         if (tab.length != 2) return null;
                         if (tab[1].length() == 1){
                             liste.add(new double[]{1, 0, 3, Double.parseDouble(tab[0]), 1});
@@ -237,7 +256,6 @@ public class ControllerG {
                     }
                 }
                 else if (current.charAt(0) == 'x') {
-                    System.out.println("cas ou je commence par x");
                     if (nbX(current) != 1) {
                         return null;
                     } else {
@@ -256,10 +274,13 @@ public class ControllerG {
                         }
                     }
                 }
-                else if (current.startsWith("cos(") || current.startsWith("sin(")) {
-                    System.out.println("cas avec sin ou cos au debut");
-                    String content = current.substring(4, closingParenthePos(current));
-                    System.out.println("content : "+content);
+                else if (current.startsWith("cos(") || current.startsWith("sin(") || current.startsWith("sinh(")) {
+                    String content;
+                    if (current.startsWith("sinh(")){
+                        content = current.substring(5, closingParenthePos(current));
+                    } else {
+                        content = current.substring(4, closingParenthePos(current));
+                    }
                     if (nbX(current) != 1) {
                         return null;
                     } else {
@@ -269,12 +290,12 @@ public class ControllerG {
                         data[4] = 0;
                         if (current.startsWith("cos(")) {
                             data[2] = 1;
-                        } else if (current.startsWith("sin(")) {
+                        }else if (current.startsWith("sinh(")) {
+                            data[2] = 4;
+                        }else if (current.startsWith("sin(")) {
                             data[2] = 2;
                         }
                         if (content.charAt(0) == 'x') {
-                            String[] res = content.split("x");
-                            System.out.println(res.length);
                             data[1] = 1;
                             liste.add(i, data);
                         } else {
@@ -290,7 +311,6 @@ public class ControllerG {
                     }
                 }
                 else {
-                    System.out.println("else");
                     if (nbX(current) != 1) {
                         return null;
                     } else {
@@ -404,13 +424,13 @@ public class ControllerG {
                     err.add("cst");
                     err.add("fo");
                 }else{
-                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
-                    fonction.cons(new Complex.Builder(cst[0],cst[1] ).build());
                     LinkedList<double[]> fo = validFct(opt.get(6));
                     if (fo == null){
                         err.add("fo");
                     }else{
+                        Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
                         fonction.coef(fo);
+                        fonction.cons(new Complex.Builder(cst[0],cst[1] ).build());
                         fract = fract.fonction(fonction.build());
                     }
                 }
@@ -564,7 +584,7 @@ public class ControllerG {
         BuilderFractal fract = new BuilderFractal();
         fract = fract.type(Character.toString(opt.get(0).charAt(0))).fichier(fileName(opt.get(1))).coloration(colorFromField(opt.get(2))).pas(validPas(opt.get(5))).iter(validIte(opt.get(7)));
         double[] cst = validCst(opt.get(3));
-        Fonction fonc = new Fonction.BuilderFonction(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
+        Fonction fonc = new Fonction.BuilderFonction().cons(new Complex.Builder(cst[0], cst[1]).build()).coef(validFct(opt.get(6))).build();
          fract = fract.fonction(fonc);
          return fract;
     }

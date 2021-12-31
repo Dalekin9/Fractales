@@ -105,43 +105,6 @@ public class ViewFX {
         Label labelTitle = new Label("Let's create a fractal!");
         labelTitle.setFont(new Font(20));
 
-        //Choix du type de fractale
-        VBox typeBox = new VBox();
-        typeBox.setAlignment(Pos.CENTER);
-        typeBox.setSpacing(7);
-        Label labelType = new Label("Type de fractale");
-        ChoiceBox<String> typechoice = new ChoiceBox<>(FXCollections.observableArrayList(
-                "Julia", "Mandelbrot", "Sierpinski"));
-        typechoice.setOnAction(e ->{
-            File file ;
-            Image image;
-            ImageView iv;
-            switch (typechoice.getValue()) {
-                case "Julia" -> {
-                    file = new File("Ressources/Julia.png");
-                    lockAll();
-                    unlockJulMand();
-                }
-                case "Mandelbrot" -> {
-                    file = new File("Ressources/Mandelbrot.png");
-                    lockAll();
-                    unlockJulMand();
-                }
-                case "Sierpinski" -> {
-                    file = new File("Ressources/Sierpinski.png");
-                    lockAll();
-                    unlockSierp();
-                }
-                default -> file = new File("Ressources/White.png");
-            }
-            colorChoice.setDisable(false);
-            image = new Image(file.toURI().toString());
-            iv = new ImageView(image);
-            previewImage.getChildren().clear();
-            previewImage.getChildren().add(iv);
-
-        });
-
         //Choix du Pas
         VBox pasBox = new VBox();
         pasBox.setAlignment(Pos.CENTER);
@@ -225,6 +188,45 @@ public class ViewFX {
         fieldOrdre = new TextField();
         textFields.add(fieldOrdre);
         sierpOpt.add(fieldOrdre);
+
+        //Choix du type de fractale
+        VBox typeBox = new VBox();
+        typeBox.setAlignment(Pos.CENTER);
+        typeBox.setSpacing(7);
+        Label labelType = new Label("Type de fractale");
+        ChoiceBox<String> typechoice = new ChoiceBox<>(FXCollections.observableArrayList(
+                "Julia", "Mandelbrot", "Sierpinski"));
+        typechoice.setOnAction(e ->{
+            File file ;
+            Image image;
+            ImageView iv;
+            switch (typechoice.getValue()) {
+                case "Julia" -> {
+                    file = new File("Ressources/Julia.png");
+                    lockAll();
+                    unlockJulMand();
+                    constantBox.setDisable(false);
+                }
+                case "Mandelbrot" -> {
+                    file = new File("Ressources/Mandelbrot.png");
+                    lockAll();
+                    unlockJulMand();
+                    constantBox.setDisable(true);
+                }
+                case "Sierpinski" -> {
+                    file = new File("Ressources/Sierpinski.png");
+                    lockAll();
+                    unlockSierp();
+                }
+                default -> file = new File("Ressources/White.png");
+            }
+            colorChoice.setDisable(false);
+            image = new Image(file.toURI().toString());
+            iv = new ImageView(image);
+            previewImage.getChildren().clear();
+            previewImage.getChildren().add(iv);
+
+        });
 
         lockAll();
 
@@ -406,7 +408,7 @@ public class ViewFX {
         double[][] tab_ind = fractal.getTableau();
         int tabLength = ((Sierpinski)fractal).getTab().length;
         WritableImage image = new WritableImage(tabLength,tabLength);
-
+        ImageView view = new ImageView();
         for (int i = 0;i<tabLength;i++){
             for (int j = 0; j< tabLength;j++){
                 int c = fractal.coloration((int)tab_ind[i][j]);
@@ -417,10 +419,11 @@ public class ViewFX {
                 }
             }
         }
-        image = resizeIfNecessary(tabLength,tabLength, image);
         fractImg.setImage(image);
+        image = resizeIfNecessary(tabLength,tabLength, image);
+        view.setImage(image);
         HBox pane = new HBox();
-        pane.getChildren().addAll(fractImg,createControlPanel());
+        pane.getChildren().addAll(view,createControlPanel());
         Scene scene = new Scene(pane, Math.min(tab_ind.length, image.getWidth()) + 175, Math.min(tab_ind[0].length, image.getHeight()));
         scene.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()){
@@ -442,17 +445,19 @@ public class ViewFX {
     public void showFractalJM(Fractal fractal){
         double[][] tab_index = fractal.getTableau();
         WritableImage image = new WritableImage(tab_index[0].length, tab_index.length);
+        ImageView view = new ImageView();
         for (int i = 0;i< tab_index.length;i++) {
             for (int j = 0; j < tab_index[0].length; j++) {
                 int c = fractal.coloration((int) tab_index[i][j]);
                 image.getPixelWriter().setArgb(j, i, c);
             }
         }
-        image = resizeIfNecessary(tab_index[0].length, tab_index.length, image);
         fractImg.setImage(image);
+        image = resizeIfNecessary(tab_index[0].length, tab_index.length, image);
+        view.setImage(image);
         HBox pane = new HBox();
         HBox.setMargin(pane,new Insets(5));
-        pane.getChildren().addAll(fractImg,createControlPanel());
+        pane.getChildren().addAll(view,createControlPanel());
         Scene scene = new Scene(pane, Math.min(tab_index.length, image.getWidth()) + 175, Math.min(tab_index[0].length, image.getHeight()));
         scene.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()){
