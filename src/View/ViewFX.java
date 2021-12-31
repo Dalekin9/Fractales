@@ -603,7 +603,7 @@ public class ViewFX {
 
         VBox juliaBox = new VBox();
 
-        ImageView juliaImg = new ImageView(new Image(new File("Ressources/JuliaExpl2.png").toURI().toString()));
+        ImageView juliaImg = new ImageView(new Image(new File("Ressources/JuliaExpl.png").toURI().toString()));
         Text juliaText = new Text("""
                     L'ensemble de Julia est un ensemble defini a partir
                     du comportement d'une fonction. Ainsi pour une
