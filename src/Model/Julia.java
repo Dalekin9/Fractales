@@ -20,6 +20,7 @@ public class Julia extends Fractal{
     private final int color;
     private final String fic;
     private final Fonction function;
+    private final int radius;
 
     Julia(BuilderFractal builderFractal) {
         this.rect = builderFractal.rect;
@@ -28,6 +29,7 @@ public class Julia extends Fractal{
         this.color = builderFractal.color;
         this.fic = builderFractal.fic;
         this.function = builderFractal.function;
+        this.radius = builderFractal.radius;
         this.data = createRect();
     }
 
@@ -55,7 +57,7 @@ public class Julia extends Fractal{
             double h = (this.rect[1][1] - this.rect[1][0]) / this.pas;
             double[][] d = new double[(int) h][(int) w];
             int total = (d.length * d[0].length);
-            ActionJulia work = new ActionJulia(0, total, d, pas, this.rect[0][0], this.rect[1][0], function, iter, total / 3);
+            ActionJulia work = new ActionJulia(0, total, d, pas, this.rect[0][0], this.rect[1][0], function, iter, total / 3, radius);
             ForkJoinPool pool = new ForkJoinPool();
             pool.invoke(work);
             return d;
@@ -94,7 +96,6 @@ public class Julia extends Fractal{
                 //345 = 0.9583
                 float res = (float) (0.9583 + (0.0967 * (val / this.iter)));
                 return Color.HSBtoRGB(res, (float)val/iter, (float)val/iter);
-
             }
             case 2 -> {
                 //180 = 0.5
@@ -153,7 +154,9 @@ public class Julia extends Fractal{
         writer.println("Type : Julia\n");
         writer.println("Rect : [ ["+this.rect[0][0]+", "+this.rect[0][1]+"], ["+this.rect[1][0]+", "+this.rect[1][1]+"] ]");
         writer.println("Pas : "+this.pas);
+        writer.println("Radius : "+this.radius);
         writer.println("Fonction : "+ this.function);
+        writer.println("Constante : "+this.function.getC());
         writer.println("Iterations : "+ this.iter);
         if (this.color == 0) {
             writer.println("Coloration : Noire et Blanche");

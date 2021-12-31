@@ -404,7 +404,8 @@ public class ControllerG {
                     err.add("cst");
                     err.add("fo");
                 }else{
-                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction(new Complex.Builder(cst[0],cst[1] ).build());
+                    Fonction.BuilderFonction fonction = new Fonction.BuilderFonction();
+                    fonction.cons(new Complex.Builder(cst[0],cst[1] ).build());
                     LinkedList<double[]> fo = validFct(opt.get(6));
                     if (fo == null){
                         err.add("fo");

@@ -74,9 +74,13 @@ public class Complex {
         if (b.p_img == 0){
             return new Complex(new Builder( this.p_reel / b.p_reel, this.p_img / b.p_reel ));
         } else {
+            //System.out.println("this : "+this);
+            //System.out.println("b : "+b);
             Complex c = new Complex.Builder(b.p_reel, -b.p_img).build();
             Complex num = this.mul(c);
+            //System.out.println("num : "+num);
             Complex den = new Complex.Builder(b.p_reel*b.p_reel + b.p_img*b.p_img,0).build();
+            //System.out.println("den : "+den);
             return new Complex(new Builder(num.p_reel / den.p_reel, num.p_img/den.p_reel));
         }
     }
@@ -113,6 +117,11 @@ public class Complex {
 
     public Complex sin(){
         return new Complex.Builder(Math.sin(p_reel) * Math.cosh(p_img), - (Math.cos(p_reel) * Math.sinh(p_img))).build();
+    }
+
+    public Complex sinh(){
+        // (e puiss x - e puissance-x) / 2
+        return new Complex.Builder(Math.sinh(p_reel)*Math.cos(p_img),  Math.cosh(p_reel)*Math.sin(p_img)).build();
     }
 
 }

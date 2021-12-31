@@ -11,6 +11,7 @@ public class BuilderFractal {
     protected String fic;
     protected int ordre;
     protected String type;
+    protected int radius;
 
     public BuilderFractal(){
         this.rect = new double[][]{{-1, 1}, {-1, 1}};
@@ -20,6 +21,7 @@ public class BuilderFractal {
         this.fic = "Fractale";
         this.ordre = 0;
         this.type = "";
+        this.radius = 2;
     }
 
     public BuilderFractal rect(double[] r){
@@ -59,6 +61,11 @@ public class BuilderFractal {
 
     public BuilderFractal iter(int i){
         this.iter = i;
+        return this;
+    }
+
+    public BuilderFractal radius(int i){
+        this.radius = i;
         return this;
     }
 

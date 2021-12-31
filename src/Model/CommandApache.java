@@ -34,6 +34,15 @@ public class CommandApache {
                 .required(false)
                 .build());
 
+        //radius
+        options.addOption(Option.builder("ra")
+                .longOpt("rad")
+                .hasArg(true)
+                .desc("Radius pour le calcul de l'indice de divergence")
+                .argName("radius")
+                .required(false)
+                .build());
+
         //pas
         options.addOption(Option.builder("p")
                 .longOpt("pas")
