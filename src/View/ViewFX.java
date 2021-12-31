@@ -479,12 +479,12 @@ public class ViewFX {
      */
     public void mainMenu(){
         GridPane grid = new GridPane();
-        grid.setAlignment(Pos.TOP_CENTER);
+        grid.setAlignment(Pos.CENTER);
         grid.setHgap(20);
         grid.setVgap(15);
 
         Label titleLabel = new Label("Fractales");
-        titleLabel.setFont(new Font("Arial",35));
+        titleLabel.setFont(new Font("Arial",50));
         GridPane.setHalignment(titleLabel, HPos.CENTER);
         grid.add(titleLabel,0,0,2,1);
 
@@ -537,13 +537,8 @@ public class ViewFX {
         grid.add(howToBox,1,2);
         grid.add(explainBox,0,2);
 
-        BackgroundImage bg = new BackgroundImage(new Image(new File("Ressources/bg.png").toURI().toString()),
-                                                BackgroundRepeat.NO_REPEAT,
-                                                BackgroundRepeat.NO_REPEAT,
-                                                BackgroundPosition.DEFAULT,
-                                                BackgroundSize.DEFAULT);
-        grid.setBackground(new Background(bg));
-        mainStage.setScene(new Scene(grid,1000,600));
+        grid.setStyle("-fx-background-color: radial-gradient(center 50% 50% , radius 90% , #BEE8F2, #000000);");
+        mainStage.setScene(new Scene(grid,800,500));
         mainStage.show();
     }
 
@@ -585,6 +580,7 @@ public class ViewFX {
         backButton.setOnAction(e -> mainMenu());
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
+        root.setStyle("-fx-background-color: radial-gradient(center 50% 50% , radius 90% , #BEE8F2, #000000);");
 
         root.getChildren().addAll(gallery,backButton);
 
@@ -655,7 +651,7 @@ public class ViewFX {
         grid.add(backButton,1,1);
 
         grid.setAlignment(Pos.TOP_CENTER);
-        grid.setStyle("-fx-background-color: radial-gradient(center 50% 50% , radius 100% , #FFFFFF, #000000);");
+        grid.setStyle("-fx-background-color: radial-gradient(center 50% 50% , radius 90% , #BEE8F2, #000000);");
         GridPane.setHalignment(backButton,HPos.CENTER);
 
         mainStage.setScene(new Scene(grid,1000,600));
@@ -695,6 +691,7 @@ public class ViewFX {
 
         GridPane.setHalignment(backButton,HPos.CENTER);
         grid.add(backButton,0,1);
+        grid.setStyle("-fx-background-color: radial-gradient(center 50% 50% , radius 90% , #BEE8F2, #000000);");
 
         mainStage.setScene(new Scene(grid,700,350));
         mainStage.show();
